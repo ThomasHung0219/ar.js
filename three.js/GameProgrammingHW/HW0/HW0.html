@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<style>
+
+#info {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00
+}
+
+#comment{
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00
+}
+
+body {
+  overflow: hidden;
+}
+
+
+</style>
+</head>
+
+<body> 
+<div id="info">HW0.js</div>
+<div id="comment">press any key to start/stop the train.</div>
+<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+
+var camera, scene, renderer;
+var train, angle= 1.57079, clock, tmp = 0, able = false,key = 0;
+
+init();
+animate();
+
+
+function init() {
+  
+  window.addEventListener('keydown',  function(e){
+                            if(able == false)
+                            {
+                            	able = true;
+                            }
+                            
+                            else
+                            {
+                            	able =false;
+                            }
+                            //console.log(e.code);
+                          }, false); 
+
+  scene = new THREE.Scene();
+
+  clock = new THREE.Clock();
+ 
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x888888);
+  document.body.appendChild(renderer.domElement);
+
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+  camera.position.z = 300;
+  camera.position.y = 300;
+  let controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  ////////////////////////////////////////////////////////////////
+  var gridXZ = new THREE.GridHelper(400, 20, 'red', 'white');
+  scene.add(gridXZ);
+ 
+  train = new THREE.Mesh(new THREE.BoxGeometry(10,10,30), new THREE.MeshNormalMaterial());
+  train.position.set(100,5,-50);
+  scene.add(train);
+  
+  
+
+  
+  
+}
+
+
+
+
+function animate() {
+  	var radius = 50,dis = -1;
+  
+	document.addEventListener('keydown', function(event) {
+  if (event.code == 'KeyZ' && (event.ctrlKey || event.metaKey)) {
+    console.log("hello");
+  }
+});
+  
+  
+  
+  	if(able==true){
+    	
+      if(tmp <= 400){
+        var x = train.position.x+(0.5*dis);
+        train.rotation.y = angle = 1.57079;
+        train.position.set(x,5,-50);
+        tmp++;
+        
+      }else if(tmp <=500 && tmp >400){
+        train.position.set((radius*Math.cos(angle))-100 ,5 ,-radius*Math.sin(angle));
+        train.rotation.y = angle;
+        angle += 0.031415926;
+        tmp++;
+      }else if(tmp <=900 && tmp >500){
+        var x = train.position.x-(0.5*dis);
+        train.rotation.y = angle = 1.57079;
+        train.position.set(x,5,50);
+        tmp++;
+      }else if(tmp <=1000 && tmp >900){
+        train.position.set((-radius*Math.cos(angle))+100 ,5 ,radius*Math.sin(angle));
+        train.rotation.y = angle;
+        angle += 0.031415926;
+        tmp++;
+        //console.log(angle);
+      }
+      else if(tmp > 1000){
+       tmp = 0;
+      }
+    
+    }
+  
+  
+  
+   
+      
+    
+    
+  
+  
+   
+     
+  
+  
+  
+  
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+
+} 
+
+</script>
+
+</body>
+
+</html>
