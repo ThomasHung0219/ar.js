@@ -22,7 +22,7 @@ var renderer, scene, camera;
 var stats;
 var arToolKitSource, arToolKitContext;
 var markerHiro;
-var lasty=0,currenty=0;
+var lasty,currenty;
 
 var theta = 0,angle = 0;
 
@@ -31,7 +31,7 @@ animate();
 
 var c = new THREE.MeshBasicMaterial();
 var count = 0;
-c.color.setHSL(0.5, count, 0.5);
+
 
 function init() {
 
@@ -100,6 +100,7 @@ function init() {
 	})
 
 	markerHiro = addMarkerHiro();
+	c.color.setHSL(0.5, count, 0.5);
 	scene.add (markerHiro); 
 	
 }
@@ -164,7 +165,7 @@ function animate() {
     if(count < 0){
         count = 0;
     }
-	console.log(count);
+	
 	
 	renderer.render (scene, camera);	
 }
