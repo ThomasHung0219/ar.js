@@ -31,7 +31,7 @@ animate();
 
 var c = new THREE.MeshBasicMaterial();
 var count = 0;
-c.color.setHSL(0.7, count, 0.5);
+c.color.setHSL(0.5, count, 0.5);
 
 function init() {
 
@@ -147,7 +147,7 @@ function animate() {
 	if( arToolkitSource.ready === false )	return
 	arToolkitContext.update( arToolkitSource.domElement )
 	
-	c.color.setHSL(0.7, count, 0.5);
+	c.color.setHSL(0.5, count, 0.5);
 	theta += 0.01;
 	lasty = markerHiro.children[1].position.y;
 	markerHiro.children[0].position.set (0.5*Math.sin(theta), 0.1, 0.5*Math.cos(theta));
