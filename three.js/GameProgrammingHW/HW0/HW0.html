@@ -14,28 +14,24 @@
   color: #ffff00
 }
 
-#comment{
-  position: absolute;
-  top: 20px;
-  width: 100%;
-  padding: 10px;
-  text-align: center;
-  color: #ffff00
-}
 
-body {
-  overflow: hidden;
-}
 
 
 </style>
 </head>
 
 <body> 
-<div id="info">HW0.js</div>
-<div id="comment">press any key to start/stop the train.</div>
+<div id="info">
+	HW0.js
+	<br>
+	press any key to start/stop the train.
+	<br>
+	<button id="train_s" >Start/Stop the train</button>
+</div>
+
 <script src="https://threejs.org/build/three.min.js"></script>
 <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 
 <script>
 
@@ -45,19 +41,15 @@ var train, angle= 1.57079, clock, tmp = 0, able = false,key = 0;
 init();
 animate();
 
+$("#train_s").click(function() {
+  able = !able;
+});
+
 
 function init() {
   
   window.addEventListener('keydown',  function(e){
-                            if(able == false)
-                            {
-                            	able = true;
-                            }
-                            
-                            else
-                            {
-                            	able =false;
-                            }
+                            able = !able;
                             //console.log(e.code);
                           }, false); 
 
@@ -78,8 +70,16 @@ function init() {
   ////////////////////////////////////////////////////////////////
   var gridXZ = new THREE.GridHelper(400, 20, 'red', 'white');
   scene.add(gridXZ);
+  
+  train = new THREE.Group();
  
-  train = new THREE.Mesh(new THREE.BoxGeometry(10,10,30), new THREE.MeshNormalMaterial());
+  let trainBody = new THREE.Mesh(new THREE.BoxGeometry(10,10,30), new THREE.MeshNormalMaterial());
+  
+  let chimney = new THREE.Mesh (new THREE.CylinderGeometry (4,4,20,12), new THREE.MeshNormalMaterial());
+  chimney.position.y = 5;
+  chimney.position.z = -10;
+  
+  train.add(trainBody,chimney);
   train.position.set(100,5,-50);
   scene.add(train);
   
@@ -105,31 +105,31 @@ function animate() {
   
   	if(able==true){
     	
-      if(tmp <= 400){
-        var x = train.position.x+(0.5*dis);
+      if(tmp <= 97){
+        var x = train.position.x+(3.0769*2/3*dis);
         train.rotation.y = angle = 1.57079;
         train.position.set(x,5,-50);
         tmp++;
         
-      }else if(tmp <=500 && tmp >400){
+      }else if(tmp <=173 && tmp >97){
         train.position.set((radius*Math.cos(angle))-100 ,5 ,-radius*Math.sin(angle));
         train.rotation.y = angle;
-        angle += 0.031415926;
+        angle += 0.031415926*4/3;
         tmp++;
-      }else if(tmp <=900 && tmp >500){
-        var x = train.position.x-(0.5*dis);
-        train.rotation.y = angle = 1.57079;
+      }else if(tmp <=270 && tmp >173){
+        var x = train.position.x-(3.07693*2/3*dis);
+        train.rotation.y = angle = 3*1.57079;
         train.position.set(x,5,50);
         tmp++;
-      }else if(tmp <=1000 && tmp >900){
-        train.position.set((-radius*Math.cos(angle))+100 ,5 ,radius*Math.sin(angle));
+      }else if(tmp <=345 && tmp >270){
+        train.position.set((radius*Math.cos(angle))+100 ,5 ,-radius*Math.sin(angle));
         train.rotation.y = angle;
-        angle += 0.031415926;
+        angle += 0.031415926*4/3;
         tmp++;
         //console.log(angle);
       }
-      else if(tmp > 1000){
-       tmp = 0;
+      else if(tmp > 345){
+		tmp = 0;
       }
     
     }
