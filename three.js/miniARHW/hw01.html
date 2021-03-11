@@ -7,7 +7,9 @@
 <!-- ar.js -->
 <script src="../build/ar.js"></script>
 <script>THREEx.ArToolkitContext.baseURL = '../'</script>
-
+<head>
+<title> miniAR HW01 </title>
+</head>
 <body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
 <div style='position: absolute; top: 10px; width:100%; text-align: center; z-index: 1;'>
 <a href="https://github.com/jeromeetienne/AR.js/" target="_blank">AR.js</a>
@@ -22,16 +24,15 @@ var renderer, scene, camera;
 var stats;
 var arToolKitSource, arToolKitContext;
 var markerHiro;
-var lasty,currenty;
 
-var theta = 0,angle = 0;
+var theta = 0;
+var count = 0;
+var pos, pos2;
+var color;
+var c = new THREE.MeshBasicMaterial();
 
 init();
 animate();
-
-var c = new THREE.MeshBasicMaterial();
-var count = 0;
-
 
 function init() {
 
@@ -98,9 +99,10 @@ function init() {
 		// copy projection matrix to camera
 		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
 	})
-
+	
+	color = new THREE.Color("hsl(0%, 0%, 50%)");
+	c.color.setHSL(0, 0, 0.5);
 	markerHiro = addMarkerHiro();
-	c.color.setHSL(0.7, count, 0.5);
 	scene.add (markerHiro); 
 	
 }
@@ -131,9 +133,9 @@ function addMarkerHiro(){
 	markerRoot.add (ball);
 	ball.position.y = 0.1;
 	
-	var cylinder = new THREE.Mesh (new THREE.CylinderGeometry (0.25,0.25, 0.5),c);
-	markerRoot.add (cylinder);
-	cylinder.position.y = 0.7;
+	var cylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.5), c);
+	markerRoot.add(cylinder);
+	cylinder.position.y = 0.7
 	
 	var grid = new THREE.GridHelper (1, 10, 'red', 'white');
 	markerRoot.add (grid);
@@ -147,25 +149,25 @@ function animate() {
 	
 	if( arToolkitSource.ready === false )	return
 	arToolkitContext.update( arToolkitSource.domElement )
+
+	theta += 0.01;
+	pos = markerHiro.children[1].position.y;
+	markerHiro.children[0].position.set (0.5 * Math.sin(theta), 0.1, 0.5 * Math.cos(theta));
 	
 	c.color.setHSL(0.7, count, 0.5);
-	theta += 0.01;
-	lasty = markerHiro.children[1].position.y;
-	markerHiro.children[0].position.set (0.5*Math.sin(theta), 0.1, 0.5*Math.cos(theta));
-	markerHiro.children[1].position.set(0,0.7+0.5*Math.sin(angle),0);
-    angle += 0.031415926;
-	currenty = markerHiro.children[1].position.y;
+	markerHiro.children[1].position.set(0, 0.7 + 0.5 * Math.sin(theta), 0);
 	
-	if(lasty > currenty){
-        count -= 0.001;
-    }
-    else {
-        count += 0.001;
-    }
-    if(count < 0){
-        count = 0;
-    }
+	pos2 = markerHiro.children[1].position.y;
 	
+	if(pos > pos2){
+		count -= 0.001;
+	}
+	else {
+		count += 0.001;
+	}
+	if(count < 0){
+		count = 0;
+	}
 	
 	renderer.render (scene, camera);	
 }
