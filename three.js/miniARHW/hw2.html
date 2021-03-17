@@ -12,7 +12,9 @@
 <div style='position: absolute; top: 10px; width:100%; text-align: center; z-index: 1;'>
 <a href="https://github.com/jeromeetienne/AR.js/" target="_blank">AR.js</a>
 	 - three.js<br>
+	 <p id="text" style ="color:gray;text-align:center;">
 	 hw2 
+	 </p>
   <br>
   <p id="text" style ="color:white;text-align:center;">
     color
@@ -133,9 +135,9 @@ function addMarkerHiro(){
 	})
 
 	group = new THREE.Group();
-	scene.add (group);
+	
 	group2 = new THREE.Group();
-	scene.add (group2);
+	
    
 	let geometry0 = new THREE.CircleGeometry( 20, 32, Math.PI/2, 2*Math.PI/3);
 	let material0 = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide} );
@@ -161,6 +163,9 @@ function addMarkerHiro(){
 	cone.rotateX(90* Math.PI / 180);
 	cone.position.set(0,0,-20);
 	group2.add(cone);
+	
+	markerRoot.add (group); 
+	markerRoot.add (group2);
 			
 	return markerRoot;
 }	
