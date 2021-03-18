@@ -170,11 +170,11 @@ function addMarkerHiro(){
 	group.add( circle2 );  
 	group.rotation.x=-1.5*Math.PI;
 	
-	let geometry3 = new THREE.ConeGeometry(1,3,4);
+	let geometry3 = new THREE.ConeGeometry(0.5,1.5,4);
 	let material3 = new THREE.MeshBasicMaterial({color:0x000000});
 	let pointer = new THREE.Mesh(geometry3,material3);
 	group2.add(pointer);
-	group2.position.set(0,0,-2);
+	group2.position.set(0,0,-2.5);
 	group2.rotation.x=0.5*Math.PI;
     markerRoot.add(group);
 	markerRoot.add(group2);
