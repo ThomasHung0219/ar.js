@@ -20,7 +20,7 @@
 <a href="https://github.com/jeromeetienne/AR.js/" target="_blank">AR.js</a>
 	 - three.js<br>
 	Minimal Version<br>
-	<p id="text" style ="color:gray;text-align:center;">
+	<p id="hw2" style ="color:gray;text-align:center;">
 	hw2
 	</p>
 	<button id='toggle' >
@@ -168,7 +168,7 @@ function addMarkerHiro(){
 	let material2 = new THREE.MeshBasicMaterial( { color: 'blue', side: THREE.DoubleSide } );
 	let circle2 = new THREE.Mesh( geometry2, material2 );
 	group.add( circle2 );  
-	group.rotation.x=1.5*Math.PI;
+	group.rotation.x=-1.5*Math.PI;
 	
 	let geometry3 = new THREE.ConeGeometry(5,10,4);
 	let material3 = new THREE.MeshBasicMaterial({color:0x000000});
