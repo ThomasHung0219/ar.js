@@ -36,7 +36,8 @@
 <script>
 
 var camera, scene, renderer;
-var train, angle= 1.57079, clock, tmp = 0, able = false,key = 0;
+var train, angle= 1.57079, clock=0, tmp = 0, able = false,key = 0;
+var mode = 0;
 
 init();
 animate();
@@ -81,6 +82,7 @@ function init() {
   
   train.add(trainBody,chimney);
   train.position.set(100,5,-50);
+  train.rotation.y = (Math.PI/2);
   scene.add(train);
   
   
@@ -105,32 +107,38 @@ function animate() {
   
   	if(able==true){
     	
-      if(tmp <= 97){
-        var x = train.position.x+(3.0769*2/3*dis);
-        train.rotation.y = angle = 1.57079;
-        train.position.set(x,5,-50);
-        tmp++;
-        
-      }else if(tmp <=173 && tmp >97){
-        train.position.set((radius*Math.cos(angle))-100 ,5 ,-radius*Math.sin(angle));
-        train.rotation.y = angle;
-        angle += 0.031415926*4/3;
-        tmp++;
-      }else if(tmp <=270 && tmp >173){
-        var x = train.position.x-(3.07693*2/3*dis);
-        train.rotation.y = angle = 3*1.57079;
-        train.position.set(x,5,50);
-        tmp++;
-      }else if(tmp <=345 && tmp >270){
-        train.position.set((radius*Math.cos(angle))+100 ,5 ,-radius*Math.sin(angle));
-        train.rotation.y = angle;
-        angle += 0.031415926*4/3;
-        tmp++;
-        //console.log(angle);
-      }
-      else if(tmp > 345){
-		tmp = 0;
-      }
+      if(tmp === 0){
+			train.position.x -= 133 * clock.getDelta();
+			if(train.position.x <= -100){
+				tmp = 1;
+				angle = Math.PI / 2;
+			}
+		}
+		if(tmp === 1){
+			angle += 2*Math.PI / 3 * clock.getDelta();
+			train.rotation.y = angle;
+			train.position.set ((radius*Math.cos(angle))-100 ,5 ,-radius*Math.sin(angle))
+		
+			if(angle >= Math.PI * 3 / 2){
+				tmp=2;
+			}
+		}
+		if(tmp === 2){
+			train.position.x += 133 * clock.getDelta();
+			if(train.position.x >= 100){
+				tmp=3;
+			}
+		}
+		if(tmp === 3){
+			angle += 2*Math.PI / 3 * clock.getDelta();
+			train.rotation.y = angle;
+			train.position.set ((radius*Math.cos(angle))+100 ,5 ,-radius*Math.sin(angle))
+		
+			if(angle >= Math.PI * 5 / 2){
+				tmp = 0;
+				angle %= (Math.PI * 2);
+			}
+		}
     
     }
   
