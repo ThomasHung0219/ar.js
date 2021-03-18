@@ -22,13 +22,14 @@
 	<p id="text" style ="color:black;text-align:center;">
 	 hw2 
 	 </p>
-</div>
-<button id='toggle'>
-toggle
-</button>
-<p id="text" style ="color:white;text-align:center;">
+	 <button id='toggle'>
+	toggle
+	</button>
+	<p id="text" style ="color:white;text-align:center;">
     color
- </p>
+	</p>
+</div>
+
 
 <script>
 
@@ -154,25 +155,25 @@ function addMarkerHiro(){
 	let geometry0 = new THREE.CircleGeometry( 20, 32, Math.PI/2, 2*Math.PI/3);
 	let material0 = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide} );
 	let circle0 = new THREE.Mesh( geometry0, material0 );
-	circle0.rotateX(90* Math.PI / 180);
+	//circle0.rotateX(90* Math.PI / 180);
 	group.add( circle0 );  
 
 	let geometry1 = new THREE.CircleGeometry( 20, 32, Math.PI/2 + 2/3*Math.PI, 2*Math.PI/3);
 	let material1 = new THREE.MeshBasicMaterial( { color: 0xff0000 , side: THREE.DoubleSide} );
 	let circle1 = new THREE.Mesh( geometry1, material1 );
-	circle1.rotateX(90* Math.PI / 180);
+	//circle1.rotateX(90* Math.PI / 180);
 	group.add( circle1 );  
    
 	let geometry2 = new THREE.CircleGeometry( 20, 32, Math.PI/2 - 2/3*Math.PI, 2*Math.PI/3);
 	let material2 = new THREE.MeshBasicMaterial( { color: 'blue' ,side: THREE.DoubleSide} );
 	let circle2 = new THREE.Mesh( geometry2, material2 );
-	circle2.rotateX(90* Math.PI / 180);
+	//circle2.rotateX(90* Math.PI / 180);
 	group.add( circle2 );  
   
 	let geometry4 = new THREE.ConeGeometry( 5, 10, 4 );
 	let material4 = new THREE.MeshBasicMaterial( {color: 0x000000} );
 	let cone = new THREE.Mesh( geometry4, material4 );
-	cone.rotateX(90* Math.PI / 180);
+	//cone.rotateX(90* Math.PI / 180);
 	cone.position.set(0,0,-20);
 	group2.add(cone);
 	
@@ -210,7 +211,7 @@ function animate() {
 	{
 		tmp = Math.ceil(angle/6.28);
 	}
-	group.rotation.y = angle;
+	group.rotation.z = angle;
 	renderer.render (scene, camera);	
 	}
 	
