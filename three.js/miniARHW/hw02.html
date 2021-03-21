@@ -24,7 +24,7 @@
 	toggle
 	</button>
 	<p id="text" style ="color:red;text-align:center;">
-color
+		color
 </p>
 </div>
 
@@ -184,33 +184,36 @@ function animate() {
 	arToolkitContext.update( arToolkitSource.domElement )
 	
 	var dt= 0.2 ;
-  var maxOmega = 5;
+	var maxOmega = 5;
   
-  if(isActive){
-   omega = omega + 0.3*dt;
-  }else{
-   omega = omega - 0.15*dt;
-  }
-  omega=clamp(omega, 0,maxOmega);
-  angle+=omega*dt;
-  group.rotation.z=angle;
-  if((angle%(2*Math.PI))<(2/3*Math.PI))
-  {
-   $('#text').css ('color', 'blue'); 
-  }
-  else if((2/3*Math.PI<(angle%(2*Math.PI)))&&((angle%(2*Math.PI))<4/3*Math.PI)){
-   $('#text').css ('color', 'red');
-}
-  else if(4/3*Math.PI<(angle%(2*Math.PI))){
-   $('#text').css ('color', 'yellow');
- }
+	if(isActive){
+		omega = omega + 0.3*dt;
+	}else{
+		omega = omega - 0.15*dt;
+	}
+	omega=clamp(omega, 0,maxOmega);
+	angle+=omega*dt;
+	group.rotation.z=angle;
+	if((angle%(2*Math.PI))<(2/3*Math.PI))
+	{
+		$('#text').css ('color', 'blue'); 
+		document.getElementById('#text').innerHTML="blue";
+	}
+	else if((2/3*Math.PI<(angle%(2*Math.PI)))&&((angle%(2*Math.PI))<4/3*Math.PI)){
+		$('#text').css ('color', 'red');
+		document.getElementById('#text').innerHTML="red";
+	}
+	else if(4/3*Math.PI<(angle%(2*Math.PI))){
+		$('#text').css ('color', 'yellow');
+		document.getElementById('#text').innerHTML="yellow";
+	}
 
 	renderer.render(scene,camera);
 	}
 	
 function clamp (x, xLo, xHi) {
 	if (x < xLo) return xLo;
-  if (x > xHi) return xHi;
-  else return x;
+	if (x > xHi) return xHi;
+	else return x;
 }
 </script></body>
