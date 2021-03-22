@@ -37,7 +37,7 @@
 	var pucks = [];
 	//var light, light2;
 	var angle = 0,flag = 0;
-	var collisionSound = document.getElementById ('collisionsound');
+	var collisionSound;
 
 
 
@@ -220,7 +220,7 @@
 	animate();
 
 	function init() {
-	  
+	  collisionSound = document.getElementById ('collisionsound');
 	  scene = new THREE.Scene();
 
 	  renderer = new THREE.WebGLRenderer();
