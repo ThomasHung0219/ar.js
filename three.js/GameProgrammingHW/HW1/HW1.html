@@ -54,9 +54,9 @@
 		  scene.add (this.mesh);
 		  this.light = new THREE.PointLight( this.mesh.material.color, 0.7);
 		  
-				this.light.position.copy(this.pos);
+		  this.light.position.copy(this.pos);
 		  this.light.position.y += 25;
-				scene.add( this.light );
+		  scene.add( this.light );
 		  
 		  
 		  this.mesh.material.color = new THREE.Color().setHSL (Math.random(), 0.5, .7);
@@ -80,7 +80,7 @@
 			//
 			if(col<=20)
 			{
-				
+				collisionSound.play();
 				let tmp1 = new THREE.Vector3().subVectors(this.pos,pucks[i].pos);
 			  
 			  let tmpv1 = new THREE.Vector3().subVectors(this.vel,pucks[i].vel);
@@ -168,7 +168,7 @@
 			  
 			  
 			  
-			  collisionSound.play();
+			  
 			}
 			
 				
@@ -178,28 +178,32 @@
 	  
 		// wall-collision
 	  if (this.pos.z < -250+R) {
+		 collisionSound.play();
 		 this.vel.z = - this.vel.z;
 		 
 		 this.pos.z = -250+R;
-		 collisionSound.play();
+		 
 	  }
 	  if (this.pos.z > 250-R) {
+		 collisionSound.play();
 		 this.vel.z = - this.vel.z;
 		 
 		 this.pos.z = 250-R;
-		 collisionSound.play();
+		 
 	  }
 	  if (this.pos.x > 250-R) {
+	     collisionSound.play();
 		 this.vel.x = - this.vel.x;
 		 
 		 this.pos.x = 250-R;
-		 collisionSound.play();
+		 
 	  }
 	 if (this.pos.x < -250+R) {
+	     collisionSound.play();
 		 this.vel.x = - this.vel.x;
 		 
 		 this.pos.x = -250+R;
-		 collisionSound.play();
+		 
 	  }
 
 		this.mesh.position.copy (this.pos);
@@ -282,6 +286,14 @@
 	   ballMesh = buildBallMesh (new THREE.Color().setHSL (Math.random(), .9, .4));
 	   let puck4 = new Puck (new THREE.Vector3(40,2,40), new THREE.Vector3(0,0,40), ballMesh);
 		 pucks.push(puck4);
+		 
+		 
+		let Plight = new THREE.PointLight( 0x000000, 100, 100 );
+		Plight.position.set( 0, 0, 0 );
+		scene.add( Plight );
+   
+		let Alight = new THREE.AmbientLight( 0x00008B ); // soft white light
+		scene.add( Alight );
 	   
 		 
 	   
