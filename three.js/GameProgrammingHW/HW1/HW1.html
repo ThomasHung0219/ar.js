@@ -31,13 +31,16 @@
 	<audio id="collisionsound" style="display:none">
 	<source src="https://thomashung0219.github.io/ar.js/three.js/GameProgrammingHW/HW1/sounds.wav" type='audio/wav'>
 	</audio>
+	<audio id="ballcollision" style="display:none">
+	<source src="https://thomashung0219.github.io/ar.js/three.js/GameProgrammingHW/HW1/pui.mp3" type='audio/wav'>
+	</audio>
 <script>
 	var camera, scene, renderer;
 
 	var pucks = [],walls = [];
 	//var light, light2;
 	var angle = 0,flag = 0;
-	var collisionSound;
+	var collisionSound,ballcollision;
 
 
 
@@ -96,7 +99,7 @@
 			//
 			if(col<=2*R)
 			{
-				collisionSound.play();
+				ballcollision.play();
 				let tmp1 = new THREE.Vector3().subVectors(this.pos,pucks[i].pos);
 			  
 			  let tmpv1 = new THREE.Vector3().subVectors(this.vel,pucks[i].vel);
@@ -246,6 +249,7 @@
 
 	function init() {
 	  collisionSound = document.getElementById ('collisionsound');
+	  ballcollision = document.getElementById ('ballcollision');
 	  scene = new THREE.Scene();
 
 	  renderer = new THREE.WebGLRenderer();
