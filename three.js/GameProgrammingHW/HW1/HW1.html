@@ -95,58 +95,42 @@
 			  
 			
 			  
-			let  col= Math.sqrt((this.pos.x-pucks[i].pos.x)*(this.pos.x-pucks[i].pos.x)+(this.pos.z-pucks[i].pos.z)*(this.pos.z-pucks[i].pos.z));
-			//
+			//let  col= Math.sqrt((this.pos.x-pucks[i].pos.x)*(this.pos.x-pucks[i].pos.x)+(this.pos.z-pucks[i].pos.z)*(this.pos.z-pucks[i].pos.z));
+			let col = this.pos.distanceTo(pucks[i].pos);
 			if(col<=2*R)
 			{
 				ballcollision.play();
-				let tmp1 = new THREE.Vector3().subVectors(this.pos,pucks[i].pos);
+				
+				
 			  
-			  let tmpv1 = new THREE.Vector3().subVectors(this.vel,pucks[i].vel);
-			  
-			  tmpv1.dot(tmp1);
-			  
-			  tmpv1.divideScalar(col*col);
-			  
-			  tmpv1.multiply(tmp1);
-			  
-			  
-			  this.vel.sub(tmpv1);
-			  
-			  
-			  
-			  
-			  
-			  
-			  
-			  
-			  
-			  let tmp2 = new THREE.Vector3().subVectors(pucks[i].pos,this.pos);
-			  
-			  let tmpv2 = new THREE.Vector3().subVectors(pucks[i].vel,this.vel);
-			  
-			   let  col2= Math.sqrt((pucks[i].pos.x-this.pos.x)*(pucks[i].pos.x-this.pos.x)+(pucks[i].pos.z-this.pos.z)*(pucks[i].pos.z-this.pos.z));
-			  
-			  tmpv2.dot(tmp2);
-			  
-			  tmpv2.divideScalar(col2*col2);
-			  
-			  tmpv2.multiply(tmp2);
-			  
-			  pucks[i].vel.sub(tmpv2);
+						let v1m = this.vel.clone().sub(pucks[i].vel);
+						let p1m = this.pos.clone().sub(pucks[i].pos);
+						let colS = this.pos.clone().distanceToSquared(pucks[i].pos);
+						let v1d = v1m.clone().dot(p1m);
+						let v1u = p1m.clone().multiplyScalar(v1d);
+						let v1a = v1u.divideScalar(colS);
+
+						let v2m = pucks[i].vel.clone().sub(this.vel);
+						let p2m = pucks[i].pos.clone().sub(this.pos);
+						let colS2 = pucks[i].pos.clone().distanceToSquared(this.pos);
+						let v2d = v2m.clone().dot(p2m);
+						let v2u = p2m.clone().multiplyScalar(v2d);
+						let v2a = v2u.divideScalar(colS2);
+						
+						
+						this.vel = this.vel.clone().sub(v1a);
+						pucks[i].vel = pucks[i].vel.clone().sub(v2a);
+
+						
+						let d = 2*R - col;
+						let backP = pucks[i].pos.clone().sub(this.pos).normalize().multiplyScalar(d/2);
+						this.pos = this.pos.clone().sub(backP); 
+						pucks[i].pos = pucks[i].pos.clone().add(backP.multiplyScalar(d/2));
 			  
 			  
-			  
-			 
-			 
-			  let d = 2*R-col2;
-			  tmp2.multiplyScalar(d/2).normalize();
-			  this.pos.sub(tmp2);
-			  pucks[i].pos.add(tmp2);
-			  
-			  let tmp = pucks[i].vel;
+			  /*let tmp = pucks[i].vel;
 			  pucks[i].vel = this.vel;
-			  this.vel = tmp;
+			  this.vel = tmp;*/
 			  /*if(this.pos.x>pucks[i].pos.x)
 			  {
 				this.pos.x+= Math.abs(tmp2.x);
@@ -234,7 +218,7 @@
 	}
 
 	function buildBallMesh (mycolor) {
-	  let ballMesh = new THREE.Mesh (new THREE.CylinderGeometry(R,R,4,20), new THREE.MeshBasicMaterial());
+	  let ballMesh = new THREE.Mesh (new THREE.CylinderGeometry(R,R,10,20), new THREE.MeshPhongMaterial());
 	  ballMesh.material.color = mycolor;
 	  return ballMesh;
 	}
@@ -326,7 +310,7 @@
 		 pucks.push(puck4);
 		 
 		 
-		let Plight = new THREE.PointLight( 0x000000, 0.1 );
+		let Plight = new THREE.PointLight( 0xffffff, 1,1000 );
 		Plight.position.set( 0, 10, 0 );
 		scene.add( Plight );
    
