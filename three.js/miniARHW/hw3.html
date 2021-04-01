@@ -40,7 +40,7 @@
 var camera, cameraHUD, scene, sceneHUD, renderer;
 var stats;
 var arToolKitSource, arToolKitContext;
-var markerHiro;
+var markerHiro,markerRoot;
 var theta = 0;
 var pos = 0;
 var angle = 0;
@@ -160,7 +160,7 @@ function init() {
 	
 function addMarkerHiro(){
 	
-    let markerRoot = new THREE.Group()
+    markerRoot = new THREE.Group()
 	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 		type : 'pattern',
 		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.hiro'
