@@ -26,7 +26,7 @@
 	hw3
 	</p>
 	
-	<p id="text" style ="color:red;text-align:center;margin-right:48%;margin-left:48%;background-color:#888888;">
+	<p id="text" style ="color:red;text-align:center;margin-right:55%;margin-left:55%;background-color:#888888;">
 	color
 	</p>
 </div>
@@ -78,6 +78,17 @@ animate();
 
  
 function init() {
+	var IsIosD = navigator.platform.match(/iphone|iPod|iPad|Android/);
+	
+	if(IsIosD){
+		window.addEventListener ('touchstart', onMouseDown, false);
+		window.addEventListener ('touchend', onMouseUp, false);
+	}
+	
+	else{
+		window.addEventListener ('mousedown', onMouseDown, false);
+		window.addEventListener ('mouseup', onMouseUp, false);
+	}
 
 	// init renderer
 	renderer	= new THREE.WebGLRenderer({
@@ -288,7 +299,6 @@ function clamp (x, xLo, xHi) {
 	else return x;
 }
 
-window.addEventListener ('mousedown', onMouseDown, false);
 function onMouseDown (event) {
 	event.preventDefault();
 	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -306,7 +316,6 @@ function onMouseDown (event) {
 	}
 }
 
-window.addEventListener ('mouseup', onMouseUp, false);
 function onMouseUp (event) {
 	
 	isActive = !isActive;
