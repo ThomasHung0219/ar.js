@@ -51,6 +51,9 @@ var w = $(window).width();
 var h = $(window).height();
 var halfH,halfW,whRatio = w/h;
 var button;
+var mouse = new THREE.Vector2();
+var raycaster = new THREE.Raycaster();
+var pickables = [];
 
 
 class Button{
@@ -88,6 +91,7 @@ function init() {
 		// antialias	: true,
 		alpha: true
 	});
+	renderer.autoClear = false;
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
 	// renderer.setPixelRatio( 1/2 );
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -199,6 +203,7 @@ function addMarkerHiro(){
       }); */
        button = new Button(-halfW/2,-halfH/2,halfH/3,'cyan',texture);
        sceneHUD.add(button.mesh);
+	   pickables.push(button.mesh);
       },
 	);
 
@@ -288,5 +293,23 @@ function clamp (x, xLo, xHi) {
 	if (x < xLo) return xLo;
 	if (x > xHi) return xHi;
 	else return x;
+}
+
+window.addEventListener ('mousedown', onMouseDown, false);
+function onMouseDown (event) {
+	event.preventDefault();
+	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+	// find intersections (only pick the HUD scene, using OrthographicCamera)  		
+	raycaster.setFromCamera(mouse, cameraHUD);
+				
+	var intersects = raycaster.intersectObjects(pickables);
+	if (intersects.length > 0) {
+		console.log ('picked')
+		isActive = !isActive;
+	} else {
+		console.log ('no hit')
+	}
 }
 </script></body>
