@@ -22,8 +22,8 @@
 <a href="https://github.com/jeromeetienne/AR.js/" target="_blank">AR.js</a>
 	 - three.js<br>
 	Minimal Version<br>
-	<p id="hw2" style ="color:black;text-align:center;">
-	hw2
+	<p id="hw3" style ="color:black;text-align:center;">
+	hw3
 	</p>
 	<button id='toggle' >
 	toggle
@@ -249,7 +249,7 @@ function animate() {
 	arToolkitContext.update( arToolkitSource.domElement )
 	
 	
-	render.clear();
+	renderer.clear();
 	renderer.render(scene,camera);
 	button.material.visible = markerRoot.visible;
 	renderer.render(sceneHUD, cameraHUD);
