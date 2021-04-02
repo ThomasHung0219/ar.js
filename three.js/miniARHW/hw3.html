@@ -83,17 +83,17 @@ function init() {
 
 	if (_iOSDevice) {
 		
-		$('#hw3').css ('color', 'red');
+		$('#hw3').css ('color','black' );
 		
-		window.addEventListener ('touchstart', onMouseDown, false);
-		//window.addEventListener ('touchend', onMouseUp, false);
+		document.addEventListener ('touchstart', onMouseDown, false);
+		document.addEventListener ('touchend', onMouseUp, false);
    		
    		
     } else {
-    	$('#hw3').css ('color', 'black');
+    	$('#hw3').css ('color', 'red');
 		
-		window.addEventListener ('mousedown', onMouseDown, false);
-		//window.addEventListener ('mouseup', onMouseUp, false);
+		document.addEventListener ('mousedown', onMouseDown, false);
+		document.addEventListener ('mouseup', onMouseUp, false);
     }
 
 	
@@ -324,8 +324,8 @@ function onMouseDown (event) {
 	}
 }
 
-/*function onMouseUp (event) {
+function onMouseUp (event) {
 	
 	isActive = !isActive;
-}*/
+}
 </script></body>
