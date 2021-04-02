@@ -26,9 +26,10 @@
 	hw3
 	</p>
 	
-	<p id="text" style ="color:red;width:30%;text-align:center;margin-right:48%;background-color:#888888;">
+	<p id="text" style ="color:red;width:30%;text-align:center;margin-right:48%;margin-left:48%;background-color:#888888;">
 	color
 	</p>
+	
 </div>
 
 
@@ -312,7 +313,7 @@ function onMouseDown (event) {
 	
 	var touches = event.changedTouches;
 	for (var i = 0; i < touches.length; i++) {
-		$('#hw3').css ('color','yellow' );
+		
 		mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 		
@@ -320,6 +321,7 @@ function onMouseDown (event) {
 		raycaster.setFromCamera(mouse, cameraHUD);
 					
 		var intersects = raycaster.intersectObjects(pickables);
+		document.write(intersects);
 		if (intersects.length > 0) {
 			$('#hw3').css ('color','yellow' );
 			isActive = true;
