@@ -26,7 +26,7 @@
 	hw3
 	</p>
 	
-	<p id="text" style ="color:red;text-align:center;margin-right:48%;margin-left:48%;background-color:#888888;">
+	<p id="text" style ="color:red;text-align:center;margin-right:48%;background-color:#888888;">
 	color
 	</p>
 </div>
@@ -309,23 +309,31 @@ function clamp (x, xLo, xHi) {
 
 function onMouseDown (event) {
 	event.preventDefault();
-	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+	
+	var touches = event.changedTouches;
+	for (var i = 0; i < touches.length; i++) {
+		mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-	// find intersections (only pick the HUD scene, using OrthographicCamera)  		
-	raycaster.setFromCamera(mouse, cameraHUD);
-				
-	var intersects = raycaster.intersectObjects(pickables);
-	if (intersects.length > 0) {
-		console.log ('picked')
-		isActive = !isActive;
-	} else {
-		console.log ('no hit')
+		// find intersections (only pick the HUD scene, using OrthographicCamera)  		
+		raycaster.setFromCamera(mouse, cameraHUD);
+					
+		var intersects = raycaster.intersectObjects(pickables);
+		if (intersects.length > 0) {
+			console.log ('picked')
+			isActive = !isActive;
+		} else {
+			console.log ('no hit')
+		}
 	}
 }
 
 function onMouseUp (event) {
+	event.preventDefault();
 	
-	isActive = !isActive;
+	var touches = event.changedTouches;
+	for (var i = 0; i < touches.length; i++) {
+		isActive = !isActive;
+	}
 }
 </script></body>
