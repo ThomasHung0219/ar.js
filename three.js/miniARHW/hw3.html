@@ -78,21 +78,25 @@ animate();
 
  
 function init() {
-	var IsIosD = !!navigator.platform.match(/iphone|iPod|iPad|Android/);
-	
-	if(IsIosD){
+
+	var _iOSDevice = !!navigator.platform.match(/iPhone|iPod|iPad/);
+
+	if (_iOSDevice) {
+		
 		$('#hw3').css ('color', 'red');
 		
 		window.addEventListener ('touchstart', onMouseDown, false);
 		window.addEventListener ('touchend', onMouseUp, false);
-	}
-	
-	else{
-		$('#hw3').css ('color', 'black');
+   		
+   		});
+    } else {
+    	$('#hw3').css ('color', 'black');
 		
 		window.addEventListener ('mousedown', onMouseDown, false);
 		window.addEventListener ('mouseup', onMouseUp, false);
-	}
+    }
+
+	
 
 	// init renderer
 	renderer	= new THREE.WebGLRenderer({
