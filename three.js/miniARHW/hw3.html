@@ -26,6 +26,10 @@
 	hw3
 	</p>
 	
+	<p id="press" style ="color:black;text-align:center;">
+	did not press
+	</p>
+	
 	<p id="text" style ="color:red;width:30%;text-align:center;margin-right:48%;margin-left:48%;background-color:#888888;">
 	color
 	</p>
@@ -323,10 +327,12 @@ function onMouseDown (event) {
 		var intersects = raycaster.intersectObjects(pickables);
 		
 		if (intersects.length > 0) {
-			$('#hw3').css ('color','yellow' );
+			$('#press').css ('color','yellow' );
+			$('#press').html('<p id="press" style ="color:black;text-align:center;">press</p>');	
 			isActive = true;
 		} else {
-			$('#hw3').css ('color','green' );
+			$('#press').css ('color','green' );
+			$('#press').html('<p id="press" style ="color:black;text-align:center;">press the wrong place</p>');
 			isActive = false;
 		}
 	}
@@ -337,7 +343,8 @@ function onMouseUp (event) {
 	
 	var touches = event.changedTouches;
 	for (var i = 0; i < touches.length; i++) {
-		$('#hw3').css ('color','cyan' );
+		$('#press').css ('color','cyan' );
+		$('#press').html('<p id="press" style ="color:black;text-align:center;">did not press</p>');
 		isActive = false;
 	}
 }
