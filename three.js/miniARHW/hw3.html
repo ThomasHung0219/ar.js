@@ -314,14 +314,14 @@ function onMouseDown (event) {
 	var touches = event.changedTouches;
 	for (var i = 0; i < touches.length; i++) {
 		
-		mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+		mouse.x = (touches[i].pageX / window.innerWidth) * 2 - 1;
+		mouse.y = -(touches[i].pageY / window.innerHeight) * 2 + 1;
 		
 		// find intersections (only pick the HUD scene, using OrthographicCamera)  		
 		raycaster.setFromCamera(mouse, cameraHUD);
 					
 		var intersects = raycaster.intersectObjects(pickables);
-		document.write(intersects);
+		
 		if (intersects.length > 0) {
 			$('#hw3').css ('color','yellow' );
 			isActive = true;
