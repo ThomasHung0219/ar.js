@@ -78,14 +78,18 @@ animate();
 
  
 function init() {
-	var IsIosD = navigator.platform.match(/iphone|iPod|iPad|Android/);
+	var IsIosD = !!navigator.platform.match(/iphone|iPod|iPad|Android/);
 	
 	if(IsIosD){
+		$('#hw3').css ('color', 'red');
+		
 		window.addEventListener ('touchstart', onMouseDown, false);
 		window.addEventListener ('touchend', onMouseUp, false);
 	}
 	
 	else{
+		$('#hw3').css ('color', 'black');
+		
 		window.addEventListener ('mousedown', onMouseDown, false);
 		window.addEventListener ('mouseup', onMouseUp, false);
 	}
