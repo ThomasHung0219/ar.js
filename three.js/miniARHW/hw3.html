@@ -45,8 +45,8 @@ var angle = 0;
 var group;
 var isActive = false;
 var omega = 0;
-var w = $(window).width();
-var h = $(window).height();
+var w = window.innerWidth;
+var h = window.innerHeight;
 var halfH,halfW,whRatio = w/h;
 var button;
 var mouse = new THREE.Vector2();
@@ -321,10 +321,10 @@ function onMouseDown (event) {
 					
 		var intersects = raycaster.intersectObjects(pickables);
 		if (intersects.length > 0) {
-			console.log ('picked')
+			$('#hw3').css ('color','yellow' );
 			isActive = !isActive;
 		} else {
-			console.log ('no hit')
+			//console.log ('no hit')
 		}
 	}
 }
