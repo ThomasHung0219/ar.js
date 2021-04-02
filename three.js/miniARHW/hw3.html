@@ -315,16 +315,16 @@ function onMouseDown (event) {
 		$('#hw3').css ('color','yellow' );
 		mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
+		isActive = !isActive;
 		// find intersections (only pick the HUD scene, using OrthographicCamera)  		
 		raycaster.setFromCamera(mouse, cameraHUD);
 					
 		var intersects = raycaster.intersectObjects(pickables);
 		if (intersects.length > 0) {
 			$('#hw3').css ('color','yellow' );
-			isActive = !isActive;
+			isActive = isActive;
 		} else {
-			//console.log ('no hit')
+			isActive = !isActive;
 		}
 	}
 }
