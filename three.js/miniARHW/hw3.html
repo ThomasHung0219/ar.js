@@ -315,16 +315,17 @@ function onMouseDown (event) {
 		$('#hw3').css ('color','yellow' );
 		mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-		isActive = !isActive;
+		
 		// find intersections (only pick the HUD scene, using OrthographicCamera)  		
 		raycaster.setFromCamera(mouse, cameraHUD);
 					
 		var intersects = raycaster.intersectObjects(pickables);
 		if (intersects.length > 0) {
 			$('#hw3').css ('color','yellow' );
-			isActive = isActive;
+			isActive = true;
 		} else {
-			isActive = !isActive;
+			$('#hw3').css ('color','green' );
+			isActive = false;
 		}
 	}
 }
@@ -335,7 +336,7 @@ function onMouseUp (event) {
 	var touches = event.changedTouches;
 	for (var i = 0; i < touches.length; i++) {
 		$('#hw3').css ('color','cyan' );
-		isActive = !isActive;
+		isActive = false;
 	}
 }
 </script></body>
