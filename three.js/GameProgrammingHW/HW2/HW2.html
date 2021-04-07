@@ -115,7 +115,7 @@ function init() {
   torso.add (head);
   head.position.y = 12.4;
   scene.add (torso);
-  torso.position.set (0, 19.1, 0);
+  torso.position.set (0, 19.2, 0);
 
   lLeg = buildLLeg(6.2,19.1,6.2);
   torso.add (lLeg);
@@ -136,6 +136,7 @@ function init() {
   //  head.rotation.y = Math.PI/6;
   lLeg.rotation.x = Math.PI/6;
   rLeg.rotation.x = -Math.PI/6;
+  
 }
 
 function buildHead(WW, HH, DD) {
@@ -557,7 +558,7 @@ function animate() {
   theta += omega*dt*5;
 
   if(switchPoint == 1){
-    torso.position.set (R*Math.cos(theta)-R, HH, -R*Math.sin(theta));
+    torso.position.set (R*Math.cos(theta)-R, HH+HH/2, -R*Math.sin(theta));
     torso.rotation.y = Math.PI + theta;
     if(theta >= 2*Math.PI){
     	theta = -Math.PI;
@@ -566,7 +567,7 @@ function animate() {
       //console.log("!!");
     }
   }else{
-  	torso.position.set (R/2*Math.cos(theta)+R/2, HH, +R/2*Math.sin(theta));
+  	torso.position.set (R/2*Math.cos(theta)+R/2, HH+HH/2, +R/2*Math.sin(theta));
     torso.rotation.y =  - theta;
     if(theta >= Math.PI){
     	theta = 0;
