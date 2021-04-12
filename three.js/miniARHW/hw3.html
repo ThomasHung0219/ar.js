@@ -258,6 +258,11 @@ function addMarkerHiro(){
 	cone.rotateX(-90* Math.PI / 180);
 	cone.position.set(0,0,-1);
 	group2.add(cone);
+	
+	let light = new THREE.PointLight( 0xffffff, 1,1000);
+	light.position.set(2.52,10,0);
+	group2.add(light);
+	
     markerRoot.add(group);
 	markerRoot.add(group2);
 	return markerRoot;
