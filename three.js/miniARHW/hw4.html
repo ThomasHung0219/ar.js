@@ -24,6 +24,7 @@
 <a href="https://github.com/jeromeetienne/AR.js/" target="_blank">AR.js</a>
 	 - three.js<br>
 	Minimal Version<br>
+	<button type="button" id="space" onclick="Fire()"> Fire</button>
 	<p id="hw3" style ="color:black;text-align:center;">
 	hw3
 	</p>
@@ -118,6 +119,11 @@ function CannonAngleMin()
 	cir_angle -= 0.05; 
 }
 
+function Fire()
+{
+	flag=1;
+}
+
 function makeCannon() {
 	let cannon = new THREE.Group();
   body = new THREE.Mesh (new THREE.SphereGeometry(
@@ -136,7 +142,7 @@ function computeInitPosVel() {
   //let barrel = cannon.children[1];
   const SPEED = 29.8;
 	vel = barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
-  barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED);
+    barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED);
   
   
   
