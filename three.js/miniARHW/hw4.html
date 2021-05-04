@@ -121,9 +121,9 @@ function CannonAngleMin()
 function makeCannon() {
 	let cannon = new THREE.Group();
   body = new THREE.Mesh (new THREE.SphereGeometry(
-    10,20,20, Math.PI+Math.PI*0.1,Math.PI*1.8,0,Math.PI/2), new THREE.MeshNormalMaterial());
+    1.0,2.0,2.0, Math.PI+Math.PI*0.1,Math.PI*1.8,0,Math.PI/2), new THREE.MeshNormalMaterial());
   barrelPart = new THREE.Group();
-  barrel = new THREE.Mesh (new THREE.CylinderGeometry(2,2,20), new THREE.MeshNormalMaterial());
+  barrel = new THREE.Mesh (new THREE.CylinderGeometry(0.2,0.2,2.0), new THREE.MeshNormalMaterial());
   barrelPart.add (barrel);
   barrel.position.y = 10;
   barrelPart.rotation.z = bar_angle;
@@ -386,7 +386,7 @@ function addMarkerHiro(){
 	markerRoot.add (cannon);
   
     /*ball = new THREE.Mesh (new THREE.SphereGeometry(2,8,8), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));*/
-    ball = new THREE.Mesh (new THREE.CylinderGeometry(.52,2,5,20), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));
+    ball = new THREE.Mesh (new THREE.CylinderGeometry(.52,0.2,0.5,2.0), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));
     light = new THREE.PointLight( 0xffffff, 1);
     markerRoot.add(ball);
     markerRoot.add(light);
