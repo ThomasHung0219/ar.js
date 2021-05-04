@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+<!-- three.js library -->
+<script src='../examples/vendor/three.js/build/three.min.js'></script>
+<script src="../examples/vendor/three.js/examples/js/libs/stats.min.js"></script>
+<!-- ar.js -->
+<script src="../build/ar.js"></script>
+<script>THREEx.ArToolkitContext.baseURL = '../'</script>
+<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js">
+</script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.js"> 
+</script>
+<br>
+<br>
+<br>
+
+<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+<div style='position: absolute; top: 10px; width:100%; text-align: center; z-index: 1;'>
+<a href="https://github.com/jeromeetienne/AR.js/" target="_blank">AR.js</a>
+	 - three.js<br>
+	Minimal Version<br>
+	<p id="hw3" style ="color:black;text-align:center;">
+	hw3
+	</p>
+	
+	<p id="press" style ="color:black;text-align:center;">
+	did not press
+	</p>
+	
+	<p id="text" style ="color:red;width:30%;text-align:center;margin-right:48%;margin-left:48%;background-color:#888888;">
+	color
+	</p>
+	
+</div>
+
+
+<script>
+
+// global variables
+var camera, cameraHUD, scene, sceneHUD, renderer;
+var stats;
+var arToolKitSource, arToolKitContext;
+var markerHiro,markerBomb,markerRoot,markerRootB;
+var group;
+var isActive = false;
+var w = window.innerWidth;
+var h = window.innerHeight;
+var halfH,halfW,whRatio = w/h;
+var button;
+var mouse = new THREE.Vector2();
+var raycaster = new THREE.Raycaster();
+var pickables = [];
+var barrelPart,barrel,body;
+var cannon;
+var counter, N, angle,bar_angle= -Math.PI/4,cir_angle=Math.PI;
+var keyboard = new KeyboardState();
+var pos, vel, force;
+var ball;
+var clock;
+var flag =0;
+var Up = document.getElementById("up");
+var line,light;
+var nowPos, prePos;
+
+
+
+class Button{
+	constructor(cx,cy,size,colorString = 'yellow',map=null){
+  	this.centerX = cx;
+    this.centerY = cy;
+    this.size = size;
+    let material = new THREE.MeshBasicMaterial({color:colorString,transparent:true,opacity:0.7});
+    if(map)
+    	material.map = map;
+    this.mesh = new THREE.Mesh(new THREE.CircleGeometry(size,36),material);
+    this.mesh.position.set(cx,cy,0);
+  }
+  setLocation(lx,ly){
+  	this.mesh.position.set(lx,ly,0);
+  }
+  d2To(v){
+  	return Math.sqrt(v[0]-this.centerX)*(v[0]-this.centerX)+(v[1]-this.centerY)*(v[1]-this.centerY);
+  }
+}
+
+init();
+animate();
+
+(function() {
+  Math.clamp = function(val, min, max) {
+    return Math.min(Math.max(val, min), max);
+
+  }
+})();
+
+function BarrelAngleAdd()
+{
+	bar_angle += 0.05; 
+}
+
+function BarrelAngleMin()
+{
+	bar_angle -= 0.05; 
+}
+
+function CannonAngleAdd()
+{
+	cir_angle += 0.05; 
+}
+
+function CannonAngleMin()
+{
+	cir_angle -= 0.05; 
+}
+
+function makeCannon() {
+	let cannon = new THREE.Group();
+  body = new THREE.Mesh (new THREE.SphereGeometry(
+    10,20,20, Math.PI+Math.PI*0.1,Math.PI*1.8,0,Math.PI/2), new THREE.MeshNormalMaterial());
+  barrelPart = new THREE.Group();
+  barrel = new THREE.Mesh (new THREE.CylinderGeometry(2,2,20), new THREE.MeshNormalMaterial());
+  barrelPart.add (barrel);
+  barrel.position.y = 10;
+  barrelPart.rotation.z = bar_angle;
+  
+	cannon.add (body, barrelPart);
+  return cannon;
+}
+
+function computeInitPosVel() {
+  //let barrel = cannon.children[1];
+  const SPEED = 27.5;
+	vel = barrel.localToWorld (new THREE.Vector3(0,20,0)).sub (
+  barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED);
+  
+  
+  
+	pos = barrel.localToWorld (new THREE.Vector3(0,22,0));
+	force = new THREE.Vector3(0,-10,0);
+  
+}
+
+function makeProjectile (v, theta) {
+	
+	const G = 10;
+  const cT = Math.sin(theta);
+  const sT = Math.cos(theta);
+  
+	let a = - G/2/v/v/cT/cT;
+  let b = v*v/G*sT*cT;
+  let c = v*v/2/G*sT*sT;
+  
+  return makeParabola (a, b, c);
+  
+}
+function makeParabola (a, b, c) {
+	let xRange = Math.sqrt(-a*c)*2/a;
+  const N = 25;
+  let dx = xRange/20;
+  
+  let points = [];
+  let x0 = b - xRange/1.5;
+  for (let i = 0; i <= N; i++) {
+  	xi = x0 + i*dx;
+    //xi = xi*Math.sin(cir_angle);
+    
+    //zi = xi*Math.cos(cir_angle);
+    yi = a*(xi-b)*(xi-b) + c;
+    //points.push (new THREE.Vector3(Math.cos(-1*cir_angle)*xi,yi+1.5,Math.sin(-1*cir_angle)*xi));
+    let temp = new THREE.Vector3(Math.cos(-1*cir_angle)*xi,yi+1.5,Math.sin(-1*cir_angle)*xi);
+    points.push (temp.add(barrelPart.localToWorld (new THREE.Vector3(0,20,0))));
+  }
+  
+  let geometry = new THREE.BufferGeometry().setFromPoints(points);
+  let parabola = new THREE.Line (geometry, new THREE.LineDashedMaterial({color:'cyan'}));
+  parabola.computeLineDistances(); // required for LineDashedMaterial
+  return parabola;
+  
+}
+
+function update() {
+
+  keyboard.update();
+  
+  if (keyboard.pressed("up"))
+  {
+
+  	bar_angle += 0.01; 
+   
+  }
+  
+  if (keyboard.pressed("down"))
+  {
+  	
+  	bar_angle -= 0.01; 
+    
+  }
+  bar_angle =Math.clamp(bar_angle,-Math.PI/3-0.15 , -Math.PI/4+0.15);
+  barrelPart.rotation.z = bar_angle;
+  
+  if (keyboard.pressed("left"))
+  {
+  	cir_angle+=0.01;
+  }
+  
+  if (keyboard.pressed("right"))
+  {
+  	cir_angle-=0.01;
+  }
+  cannon.rotation.y = cir_angle;
+  
+  if (keyboard.pressed("space"))
+  {
+
+  	flag=1;
+   
+  }
+}
+
+ 
+function init() {
+
+	var _iOSDevice = !!navigator.platform.match(/iPhone|iPod|iPad|Android/);
+
+	if (_iOSDevice) {
+		
+		$('#hw3').css ('color','black' );
+		
+		document.addEventListener ('touchstart', onTouchStart, false);
+		document.addEventListener ('touchend', onTouchEnd, false);
+   		
+   		
+    } else {
+    	$('#hw3').css ('color', 'red');
+		
+		document.addEventListener ('mousedown', onMouseDown, false);
+		document.addEventListener ('mouseup', onMouseUp, false);
+    }
+
+	
+
+	// init renderer
+	renderer	= new THREE.WebGLRenderer({
+		// antialias	: true,
+		alpha: true
+	});
+	renderer.autoClear = false;
+	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+	// renderer.setPixelRatio( 1/2 );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.domElement.style.position = 'absolute'
+	renderer.domElement.style.top = '0px'
+	renderer.domElement.style.left = '0px'
+	document.body.appendChild( renderer.domElement );
+
+	stats = new Stats();
+	document.body.appendChild( stats.dom );
+
+	// init scene and camera
+	scene	= new THREE.Scene();
+	sceneHUD = new THREE.Scene();
+	
+	halfH = 10;
+	halfW = halfH *whRatio;
+	
+	// Create a BASIC camera
+	camera = new THREE.Camera();
+	cameraHUD = new THREE.OrthographicCamera(-halfW,halfW,halfH,-halfH,-10,10);
+	scene.add(camera);
+	
+
+	////////////////////////////////////////////////////////////////////////////////
+	//          handle arToolkitSource
+	////////////////////////////////////////////////////////////////////////////////
+
+	arToolkitSource = new THREEx.ArToolkitSource({
+		// to read from the webcam 
+		sourceType : 'webcam',
+	})
+
+	arToolkitSource.init(function onReady(){
+		onResize()
+	})
+	
+	// handle resize
+	window.addEventListener('resize', function(){
+		onResize()
+	})
+	function onResize(){
+		arToolkitSource.onResize()	
+		arToolkitSource.copySizeTo(renderer.domElement)	
+		if( arToolkitContext.arController !== null ){
+			arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
+		}	
+	}
+	////////////////////////////////////////////////////////////////////////////////
+	//          initialize arToolkitContext
+	////////////////////////////////////////////////////////////////////////////////
+	
+	arToolkitContext = new THREEx.ArToolkitContext({
+		cameraParametersUrl: THREEx.ArToolkitContext.baseURL + '../data/data/camera_para.dat',
+		detectionMode: 'mono',
+		maxDetectionRate: 30,
+		canvasWidth: 80*3,
+		canvasHeight: 60*3,
+	})
+	// initialize it
+	arToolkitContext.init(function onCompleted(){
+		// copy projection matrix to camera
+		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+	})
+    
+	markerHiro = addMarkerHiro();
+	scene.add (markerHiro); 
+	
+}
+	
+function addMarkerHiro(){
+	
+    markerRoot = new THREE.Group()
+	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+		type : 'pattern',
+		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.hiro'
+	})
+	
+	markerRootB = new THREE.Group()
+	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRootB, {
+		type : 'pattern',
+		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/bomb.patt'
+	})
+	
+	/*
+	// add a torus knot & a transparent box	
+	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
+	var material	= new THREE.MeshNormalMaterial();
+	var mesh	= new THREE.Mesh( geometry, material );
+	mesh.position.y	= 0.5
+	markerRoot.add (mesh);
+	
+	mesh = new THREE.Mesh (new THREE.BoxGeometry(1,1,1), 
+				new THREE.MeshNormalMaterial({transparent:true, opacity:0.3}));
+	mesh.position.y	= 0.5
+	markerRoot.add (mesh);
+	*/
+	//////////////////////
+	//var gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
+	//scene.add(gridXZ);
+	
+	// instantiate a loader
+	var loader = new THREE.TextureLoader();
+	loader.setCrossOrigin('');
+  
+	// load a resource
+	loader.load(
+    // resource URL
+    'https://i.imgur.com/b6I5kb7.png',
+    // Function when resource is loaded
+    function(texture) {
+      // do something with the texture
+      // Plane with default texture coordinates [0,1]x[0,1]
+      /*var texMat = new THREE.MeshBasicMaterial({
+        map: texture
+      }); */
+       button = new Button(-halfW/2,-halfH/2,halfH/3,'cyan',texture);
+       sceneHUD.add(button.mesh);
+	   pickables.push(button.mesh);
+      },
+	);
+
+
+	
+	bar_angle = -Math.PI/4;
+    clock = new THREE.Clock();
+    
+
+    
+
+    ///////////////////////////////////////////////////////////
+
+	cannon = makeCannon();
+	markerRoot.add (cannon);
+  
+    /*ball = new THREE.Mesh (new THREE.SphereGeometry(2,8,8), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));*/
+    ball = new THREE.Mesh (new THREE.CylinderGeometry(.52,2,5,20), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));
+    light = new THREE.PointLight( 0xffffff, 1);
+    markerRoot.add(ball);
+    markerRoot.add(light);
+    line = makeProjectile (25, bar_angle);
+    markerRoot.add(line);
+    nowPos = new THREE.Vector3();
+    prePos = new THREE.Vector3();
+    prePos.copy(barrel.localToWorld (new THREE.Vector3(0,18,0)));
+	
+	
+    
+	return markerRoot;
+}	
+
+function animate() {
+	requestAnimationFrame (animate);
+	stats.update();
+	
+	if( arToolkitSource.ready === false )	return
+	arToolkitContext.update( arToolkitSource.domElement )
+	
+	
+	renderer.clear();
+	renderer.render(scene,camera);
+	button.mesh.material.visible = markerRoot.visible;
+	renderer.render(sceneHUD, cameraHUD);
+	
+	
+    let dt = clock.getDelta();
+  
+ 
+    update();
+    markerRoot.remove(line);
+    line = makeProjectile (30, -1*bar_angle);
+    scene.add(line);
+    if(flag==1)
+    {
+  	
+  	 if (pos === undefined) {
+  	 computeInitPosVel();
+     markerRoot.remove(ball);
+     markerRoot.remove(light);
+     markerRoot.add(ball);
+     markerRoot.add(light);
+  	 return;
+  	 }
+  	if (pos.y < 0)
+  		return;
+    
+  	vel.add (force.clone().multiplyScalar(dt));
+  	pos.add (vel.clone().multiplyScalar(dt));
+  	ball.position.copy (pos);
+    light.position.copy (pos);
+    light.position.y += 12;
+ 		prePos.copy (nowPos);
+   nowPos.copy (pos);
+  
+   ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());
+    
+    if(pos.y<=0)
+    {
+    	//console.log("hi");
+    	flag = 0;
+     
+      
+     	pos = undefined;
+    }
+    	
+    
+  }
+	}
+	
+function clamp (x, xLo, xHi) {
+	if (x < xLo) return xLo;
+	if (x > xHi) return xHi;
+	else return x;
+}
+
+function onTouchStart(event) {
+	event.preventDefault();
+	
+	var touches = event.changedTouches;
+	for (var i = 0; i < touches.length; i++) {
+		
+		mouse.x = (touches[i].pageX / window.innerWidth) * 2 - 1;
+		mouse.y = -(touches[i].pageY / window.innerHeight) * 2 + 1;
+		
+		// find intersections (only pick the HUD scene, using OrthographicCamera)  		
+		raycaster.setFromCamera(mouse, cameraHUD);
+					
+		var intersects = raycaster.intersectObjects(pickables);
+		
+		if (intersects.length > 0) {
+			$('#press').css ('color','yellow' );
+			$('#press').html('<p id="press" style ="color:black;text-align:center;">press</p>');	
+			isActive = true;
+		} else {
+			$('#press').css ('color','green' );
+			$('#press').html('<p id="press" style ="color:black;text-align:center;">press the wrong place</p>');
+			isActive = false;
+		}
+	}
+}
+
+function onTouchEnd (event) {
+	event.preventDefault();
+	
+	var touches = event.changedTouches;
+	for (var i = 0; i < touches.length; i++) {
+		$('#press').css ('color','cyan' );
+		$('#press').html('<p id="press" style ="color:black;text-align:center;">did not press</p>');
+		isActive = false;
+	}
+}
+
+function onMouseDown (event) {
+	event.preventDefault();
+	
+	
+		
+		mouse.x = (event.clientX  / window.innerWidth) * 2 - 1;
+		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+		
+		// find intersections (only pick the HUD scene, using OrthographicCamera)  		
+		raycaster.setFromCamera(mouse, cameraHUD);
+					
+		var intersects = raycaster.intersectObjects(pickables);
+		
+		if (intersects.length > 0) {
+			$('#press').css ('color','yellow' );
+			$('#press').html('<p id="press" style ="color:black;text-align:center;">press</p>');	
+			isActive = true;
+		} else {
+			$('#press').css ('color','green' );
+			$('#press').html('<p id="press" style ="color:black;text-align:center;">press the wrong place</p>');
+			isActive = false;
+		}
+	
+}
+
+function onMouseUp (event) {
+	event.preventDefault();
+	
+	
+	
+		$('#press').css ('color','cyan' );
+		$('#press').html('<p id="press" style ="color:black;text-align:center;">did not press</p>');
+		isActive = false;
+	
+}
+</script></body>
