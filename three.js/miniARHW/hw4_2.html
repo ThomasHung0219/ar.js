@@ -264,7 +264,7 @@ function animate() {
 	let angle = point.angleTo (localCamera);
 	let axis = new THREE.Vector3();
 	axis.crossVectors(point, localCamera).normalize(); // normalization is IMPORTANT!
-	let bombGroup = markerHiro.children[0];
+	let bombGroup = markerHiro.children[1];
 	bombGroup.quaternion.setFromAxisAngle (axis, angle);
 	
 	renderer.clear();
