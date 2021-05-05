@@ -255,6 +255,18 @@ function animate() {
 	arToolkitContext.update( arToolkitSource.domElement )
 	
 	
+	let localCamera = markerHiro.worldToLocal (new THREE.Vector3(0,0,0))
+	// CYLINDRICAL billboard:
+	localCamera.y = 0;
+	
+	// to rotate (0,0,1) to localCamera [markerCoord]
+	let point = new THREE.Vector3(0,0,1);
+	let angle = point.angleTo (localCamera);
+	let axis = new THREE.Vector3();
+	axis.crossVectors(point, localCamera).normalize(); // normalization is IMPORTANT!
+	let bombGroup = markerHiro.children[0];
+	bombGroup.quaternion.setFromAxisAngle (axis, angle);
+	
 	renderer.clear();
 	renderer.render(scene,camera);
 	button.mesh.material.visible = markerRoot.visible;
