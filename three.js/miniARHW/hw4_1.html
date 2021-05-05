@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<style>
+
+#info {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00
+}
+
+
+
+
+</style>
+</head>
+
+<body> 
+<div id="info">Cannon Hw4_1
+<div id="textX" style ="color:white;text-align:center;margin-right:27%;margin-left:30%;
+        background-color:888888;">
+    wind from X is 0.2
+    
+</div>
+<button type="button" id="WXI" onclick="Wxi()"> increase</button>
+<button type="button" id="WXD" onclick="Wxd()"> decrease</button>
+
+
+<div id="textZ" style ="color:white;text-align:center;margin-right:27%;margin-left:30%;
+        background-color:888888;">
+    wind from Z is 0.2
+    
+</div>
+<button type="button" id="WZI" onclick="Wzi()"> increase</button>
+<button type="button" id="WZD" onclick="Wzi()"> decrease</button>
+<br>
+<button type="button" id="up" > up</button><br>
+<button type="button" id="left" onclick="CannonAngleAdd()"> left</button>
+<button type="button" id="down" onclick="BarrelAngleMin()"> down</button>
+<button type="button" id="right" onclick="CannonAngleMin()"> right</button>
+</div>
+<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js">
+</script>
+<script src="https://jyunming-chen.github.io/tutsplus/js/KeyboardState.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script>
+
+var camera, scene, renderer;
+var barrelPart,barrel,body;
+var cannon;
+var counter, N, angle,bar_angle= -Math.PI/4,cir_angle=Math.PI;
+var keyboard = new KeyboardState();
+var pos, vel, force;
+var ball;
+var clock;
+var flag =0;
+var Up = document.getElementById("up");
+var line,light;
+var nowPos, prePos;
+var windx = 0.2,windz = 0.2;
+
+
+(function() {
+  Math.clamp = function(val, min, max) {
+    return Math.min(Math.max(val, min), max);
+
+  }
+})();
+
+function Wxi()
+{
+	windx+=0.01;
+  windx = Math.floor(windx*100)/100;
+  $('#textX').html('<div id="textX" style ="color:white;text-align:center;margin-right:27%;margin-left:30%;background-color:888888;">wind from X is '+windx+'</div>');
+}
+
+function Wxd()
+{
+	windx-=0.01;
+  windx = Math.floor(windx*100)/100;
+  $('#textX').html('<div id="textX" style ="color:white;text-align:center;margin-right:27%;margin-left:30%;background-color:888888;">wind from X is '+windx+'</div>');
+}
+
+function Wzi()
+{
+	windz+=0.01;
+  windz = Math.floor(windz*100)/100;
+  $('#textZ').html('<div id="textX" style ="color:white;text-align:center;margin-right:27%;margin-left:30%;background-color:888888;">wind from Z is '+windz+'</div>');
+}
+
+function Wzd()
+{
+	windz-=0.01;
+  windz = Math.floor(windz*100)/100;
+  $('#textZ').html('<div id="textX" style ="color:white;text-align:center;margin-right:27%;margin-left:30%;background-color:888888;">wind from Z is '+windz+'</div>');
+}
+
+
+function BarrelAngleAdd()
+{
+	bar_angle += 0.05; 
+}
+
+function BarrelAngleMin()
+{
+	bar_angle -= 0.05; 
+}
+
+function CannonAngleAdd()
+{
+	cir_angle += 0.05; 
+}
+
+function CannonAngleMin()
+{
+	cir_angle -= 0.05; 
+}
+
+$("#up").on('mousedown', function () {
+        
+       		 bar_angle += 0.05; 
+        
+    });
+
+
+up.onmousedown= function()
+{
+	bar_angle += 0.05; 
+}
+
+init();
+animate();
+
+function init() {
+	bar_angle = -Math.PI/4;
+  clock = new THREE.Clock();
+  scene = new THREE.Scene();
+
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x888888);
+  document.body.appendChild(renderer.domElement);
+
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+  camera.position.set (0,10,18);
+  let controls = new THREE.OrbitControls(camera, renderer.domElement);
+  var gridXZ = new THREE.GridHelper(20, 20, 'red', 'white');
+  scene.add(gridXZ);
+
+  ///////////////////////////////////////////////////////////
+
+	cannon = makeCannon();
+	scene.add (cannon);
+  
+  /*ball = new THREE.Mesh (new THREE.SphereGeometry(2,8,8), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));*/
+  ball = new THREE.Mesh (new THREE.CylinderGeometry(.052,0.2,0.5,20), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));
+  light = new THREE.PointLight( 0xffffff, 1);
+  scene.add(ball);
+  scene.add(light);
+  line = makeProjectile (10, -1*bar_angle);
+  scene.add(line);
+  nowPos = new THREE.Vector3();
+  prePos = new THREE.Vector3();
+  prePos.copy(barrel.localToWorld (new THREE.Vector3(0,1.8,0)));
+  
+  /*let targetBall = new THREE.Mesh (new THREE.OctahedronGeometry(3), new THREE.MeshBasicMaterial({color:'cyan', wireframe:true}));
+  scene.add (targetBall);
+  let target = new THREE.Vector3(0,0,70);
+  targetBall.position.copy (target);*/
+  
+  //////////////////////////
+  /*let point = new THREE.Vector3(1,0,0);
+  angle = point.angleTo (target); // [0, PI]
+  let tmp = new THREE.Vector3();
+  if (tmp.crossVectors(point, target).dot(new THREE.Vector3(0,1,0)) < 0) 
+  	angle *= -1;
+  
+  N = 100;
+  counter = 0;*/
+}
+
+function makeCannon() {
+	let cannon = new THREE.Group();
+  body = new THREE.Mesh (new THREE.SphereGeometry(
+    1.0,20,20, Math.PI+Math.PI*0.1,Math.PI*1.8,0,Math.PI/2), new THREE.MeshNormalMaterial());
+  barrelPart = new THREE.Group();
+  barrel = new THREE.Mesh (new THREE.CylinderGeometry(0.2,0.2,2.0), new THREE.MeshNormalMaterial());
+  barrelPart.add (barrel);
+  barrel.position.y = 1.0;
+  barrelPart.rotation.z = bar_angle;
+  
+	cannon.add (body, barrelPart);
+  return cannon;
+}
+
+function computeInitPosVel() {
+  //let barrel = cannon.children[1];
+  const SPEED = 9.8;
+	vel = barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
+  barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED);
+  
+  
+  
+	pos = barrel.localToWorld (new THREE.Vector3(0,2.2,0));
+	force = new THREE.Vector3(0,-12,0);
+  force.add(new THREE.Vector3(windx,0,windz));
+	force.add(force.clone().multiplyScalar(-0.002115));  
+}
+
+function makeProjectile (v, theta) {
+	
+	const G = 10;
+  const cT = Math.sin(theta);
+  const sT = Math.cos(theta);
+  
+	let a = - G/2/v/v/cT/cT;
+  let b = v*v/G*sT*cT;
+  let c = v*v/2/G*sT*sT;
+  
+  return makeParabola (a, b, c);
+  
+}
+function makeParabola (a, b, c) {
+	let xRange = Math.sqrt(-a*c)*2/a;
+  const N = 100;
+  let dx = xRange/90;
+  
+  let points = [];
+  let x0 = b - xRange/1.5;
+  for (let i = 0; i <= N; i++) {
+  	xi = x0 + i*dx;
+    //xi = xi*Math.sin(cir_angle);
+    
+    //zi = xi*Math.cos(cir_angle);
+    yi = a*(xi-b)*(xi-b) + c;
+    //points.push (new THREE.Vector3(Math.cos(-1*cir_angle)*xi,yi+1.5,Math.sin(-1*cir_angle)*xi));
+    let temp = new THREE.Vector3(Math.cos(-1*cir_angle)*xi,yi+0.15,Math.sin(-1*cir_angle)*xi);
+    points.push (temp.add(barrelPart.localToWorld (new THREE.Vector3(0,2.0,0))));
+  }
+  
+  let geometry = new THREE.BufferGeometry().setFromPoints(points);
+  let parabola = new THREE.Line (geometry, new THREE.LineDashedMaterial({color:'cyan'}));
+  parabola.computeLineDistances(); // required for LineDashedMaterial
+  return parabola;
+  
+}
+
+function update() {
+
+  keyboard.update();
+  
+  if (keyboard.pressed("up"))
+  {
+
+  	bar_angle += 0.01; 
+   
+  }
+  
+  if (keyboard.pressed("down"))
+  {
+  	
+  	bar_angle -= 0.01; 
+    
+  }
+  bar_angle =Math.clamp(bar_angle,-Math.PI/3-0.15 , -Math.PI/4+0.15);
+  barrelPart.rotation.z = bar_angle;
+  
+  if (keyboard.pressed("left"))
+  {
+  	cir_angle+=0.01;
+  }
+  
+  if (keyboard.pressed("right"))
+  {
+  	cir_angle-=0.01;
+  }
+  cannon.rotation.y = cir_angle;
+  
+  if (keyboard.pressed("space"))
+  {
+
+  	flag=1;
+   
+  }
+}
+
+
+
+function animate() {
+
+  requestAnimationFrame(animate);
+  render();
+  let dt = clock.getDelta();
+  
+ 
+  update();
+  scene.remove(line);
+  line = makeProjectile (10, -1*bar_angle);
+  scene.add(line);
+  if(flag==1)
+  {
+  	
+  	if (pos === undefined) {
+  	computeInitPosVel();
+    scene.remove(ball);
+    scene.remove(light);
+    scene.add(ball);
+    scene.add(light);
+  	return;
+  	}
+  	if (pos.y < 0)
+  		return;
+    
+  	vel.add (force.clone().multiplyScalar(dt));
+  	pos.add (vel.clone().multiplyScalar(dt));
+  	ball.position.copy (pos);
+    light.position.copy (pos);
+    light.position.y += 1.2;
+ 		prePos.copy (nowPos);
+  nowPos.copy (pos);
+  
+  ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());
+    
+    if(pos.y<=0)
+    {
+    	//console.log("hi");
+    	flag = 0;
+     
+      
+     	pos = undefined;
+    }
+    	
+    
+  }
+  
+
+	/*if (counter > N)
+  	return;
+    
+	// rotate angle radians from (1,0,0) in N steps
+  N = 100;
+  let dTheta = counter*angle/100;
+  if (counter < N)
+  	//cannon.rotateOnAxis (new THREE.Vector3(0,1,0), dTheta);
+    cannon.quaternion.setFromAxisAngle (new THREE.Vector3(0,1,0), dTheta);
+  
+  ++counter;*/
+}
+
+function render() {
+
+  renderer.render(scene, camera);
+
+}
+
+
+</script>
+
+</body>
+
+</html>
