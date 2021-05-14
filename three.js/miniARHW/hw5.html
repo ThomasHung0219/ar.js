@@ -271,9 +271,9 @@ function addMarkerHiro(){
       color: 'cyan',
       wireframe: true
     }));
-    scene.add(targetBall);
+    //scene.add(targetBall);
     target = new THREE.Vector3(7, 0, 0);
-    targetBall.position.copy(target);
+    //targetBall.position.copy(target);
   
     ball = new THREE.Mesh (new THREE.CylinderGeometry(.052,0.2,0.5,20), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));
     light = new THREE.PointLight( 0xffffff, 1);
@@ -419,7 +419,7 @@ function animate() {
 	let dt = clock.getDelta();
 	
 	if( arToolkitSource.ready === false )	return
-	arToolkitContext.update( arToolkitSource.domElement )
+	arToolkitContext.update( arToolkitSource.domElement );
 
 	if (markerBomb.visible === true) {
 		target.copy(markerBomb.position.clone());
