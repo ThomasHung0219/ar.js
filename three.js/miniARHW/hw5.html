@@ -228,7 +228,7 @@ function addMarkerBomb(){
 	texture = loader.load('https://i.imgur.com/PUwq86t.png');
 
 	
-	var torso = buildTorso(0.124, 0.191, 0.062);
+	var torso = buildTorso(1.24, 1.91, 0.62);
 	markerRoot.add (torso);
 	
 	
@@ -412,7 +412,7 @@ function animate() {
 		  
 		  if(counter == N)
 		  {
-			$('#msg').css ('color','black' );
+			
 			
 		  markerHiro.remove (scene.getObjectByName('projectile'));
 		  
@@ -476,6 +476,7 @@ function computeProjectile() {
 
 function computeInitPosVel() {
   //let barrel = cannon.children[1];
+  $('#msg').css ('color','black' );
   let L = target.length();
   const SPEED = L*0.8;
 	vel = barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
