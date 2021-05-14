@@ -228,7 +228,7 @@ function addMarkerBomb(){
 	texture = loader.load('https://i.imgur.com/PUwq86t.png');
 
 	
-	var torso = buildTorso(0.124, 0.191, 0.062);
+	var torso = buildTorso(1.24, 1.91, 0.62);
 	markerRoot.add (torso);
 	
 	
@@ -394,6 +394,7 @@ function animate() {
 			markerHiro.add(light);
 			markerHiro.remove (scene.getObjectByName('projectile'));
 			
+
 			if(flag)
 			{
 				let parabola = makeProjectile();
@@ -402,6 +403,7 @@ function animate() {
 				markerHiro.add(parabola);
 				parabola.quaternion.copy (q2);
 			}
+
 			
 			let alpha = counter / N;
 			let qm = q1.clone(); 
@@ -424,7 +426,9 @@ function animate() {
 				markerHiro.add(parabola);
 				parabola.quaternion.copy (q2);
 			//console.log(pos);
-			if(pos.y>=0)
+			
+		   }
+		   if(pos.y>=0)
 			{
 				if(pos.x<=1.24)
 				{
@@ -440,7 +444,6 @@ function animate() {
 		  
 			ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());
 			}
-		   }
 			  
 		  }
 		}
