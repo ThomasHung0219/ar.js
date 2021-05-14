@@ -400,7 +400,7 @@ function animate() {
 				parabola.name = 'projectile';
 				//scene.remove (scene.getObjectByName('projectile'));
 				markerHiro.add(parabola);
-				parabola.quaternion.copy (q2);
+				//parabola.quaternion.copy (q2);
 			}
 			
 			let alpha = counter / CN;
@@ -511,7 +511,7 @@ function makeParabola (a, b, c) {
   for (let i = 0; i <= N; i++) {
   	xi = x0 + i*dx;
     yi = a*(xi-b)*(xi-b) + c;
-    points.push (toBomb.add(new THREE.Vector3(xi,yi,0)));
+    points.push (new THREE.Vector3(xi,yi,0));
   }
   
   let geometry = new THREE.BufferGeometry().setFromPoints(points);
