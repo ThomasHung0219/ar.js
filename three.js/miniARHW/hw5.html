@@ -364,8 +364,8 @@ function animate() {
 	
 	if (markerBomb.visible === true) {
 		toBomb = markerHiro.worldToLocal (markerBomb.localToWorld (new THREE.Vector3(0,0,0)));
-		console.log(toBomb);
-		target.copy(toBomb.position.clone());
+		
+		target.copy(toBomb.position);
 		q1.copy(q2);  // save current (old) orientation
     
 		N = 100;
