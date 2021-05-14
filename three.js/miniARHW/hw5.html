@@ -229,9 +229,9 @@ function init() {
 	
 	
 	markerHiro = addMarkerHiro();
-	markerBomb = addMarkerBomb();
+	//markerBomb = addMarkerBomb();
 	scene.add (markerHiro); 
-	scene.add (markerBomb); 
+	//scene.add (markerBomb); 
 	initSprite(markerHiro);
 }
 	
@@ -267,10 +267,10 @@ function addMarkerHiro(){
     cannon = makeCannon();
     markerRoot.add(cannon);
 
-    targetBall = new THREE.Mesh(new THREE.OctahedronGeometry(0.3), new THREE.MeshBasicMaterial({
+    /*targetBall = new THREE.Mesh(new THREE.OctahedronGeometry(0.3), new THREE.MeshBasicMaterial({
       color: 'cyan',
       wireframe: true
-    }));
+    }));*/
     //scene.add(targetBall);
     target = new THREE.Vector3(7, 0, 0);
     //targetBall.position.copy(target);
