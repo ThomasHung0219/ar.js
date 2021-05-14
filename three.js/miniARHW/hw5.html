@@ -1,53 +1,214 @@
 <!DOCTYPE html>
 <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
+
 <!-- three.js library -->
 <script src='../examples/vendor/three.js/build/three.min.js'></script>
 <script src="../examples/vendor/three.js/examples/js/libs/stats.min.js"></script>
-
+<!-- ar.js -->
+<script src="../build/ar.js"></script>
+<script>THREEx.ArToolkitContext.baseURL = '../'</script>
 <script src="https://threejs.org/build/three.min.js"></script>
 <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<!-- ar.js -->
-<script src="explode.js"></script>
-<script src="../build/ar.js"></script>
-<script>THREEx.ArToolkitContext.baseURL = '../'</script>
+
 <head>
 <title> miniAR HW05 </title>
-</head>
-<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
-<div style='position: absolute; top: 10px; width:100%; text-align: center; z-index: 1;'>
-<a href="https://github.com/jeromeetienne/AR.js/" target="_blank">AR.js</a>
-	 - three.js<br>
-Minimal Version<br>
-Distance
-<p id='msg'></p>
-</div> 
+<style>
+#info {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00
+}
 
+body {
+  overflow: hidden;
+}
+
+</style>
+</head>
+
+<body>
+<div id="info">
+<a href="https://github.com/weslia/ar.js" target="_blank">ar.js</a> - three.js<br>
+	miniARHW HW04<br>
+	Cannon Firing<br>
+	<p id='msg'></p>
+</div>
 
 <script>
-
 // global variables
 var renderer, scene, camera;
 var stats;
 var arToolKitSource, arToolKitContext;
 var markerHiro,markerBomb;
-var cannon;
-var counter, N , CN, angle;
+/////////////////////////////////////////////////
+var cannon, barrel,body,barrelPart;
+var clock,ball,light;
+var ball;
+var pos, vel, force;
+var nowPos, prePos;
+/////////////////////
+var counter, N,CN,angle;
 var pickables = [], mouse, raycaster;
 var target, targetBall;
-var v, g;
-var theta;
-var q1,q2,flag;
-var ball,light,barrel,body,barrelPart;
-var nowPos, prePos;
-var pos, vel, force;
-var clock;
-
-
+var q1, q2,flag;
+var v = 10, g = 10, theta;
+var far, ballout = 0;
 
 init();
 animate();
+
+function init() {
+	// init renderer
+	renderer	= new THREE.WebGLRenderer({
+		// antialias	: true,
+		alpha: true
+	});
+	renderer.setClearColor(new THREE.Color('lightgrey'), 0);
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.domElement.style.position = 'absolute'
+	renderer.domElement.style.top = '0px'
+	renderer.domElement.style.left = '0px'
+	document.body.appendChild( renderer.domElement );
+
+	stats = new Stats();
+	document.body.appendChild( stats.dom );
+
+	// init scene and camera
+	scene	= new THREE.Scene();
+	
+	// Create a BASIC camera
+	camera = new THREE.Camera();
+	scene.add(camera);
+
+	////////////////////////////////////////////////////////////////////////////////
+	//          handle arToolkitSource
+	////////////////////////////////////////////////////////////////////////////////
+
+	arToolkitSource = new THREEx.ArToolkitSource({
+		// to read from the webcam 
+		sourceType : 'webcam',
+	})
+
+	arToolkitSource.init(function onReady(){
+		onResize()
+	})
+	
+	// handle resize
+	window.addEventListener('resize', function(){
+		onResize()
+	})
+	function onResize(){
+		arToolkitSource.onResize()	
+		arToolkitSource.copySizeTo(renderer.domElement)	
+		if( arToolkitContext.arController !== null ){
+			arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
+		}	
+	}
+	////////////////////////////////////////////////////////////////////////////////
+	//          initialize arToolkitContext
+	////////////////////////////////////////////////////////////////////////////////
+	
+	arToolkitContext = new THREEx.ArToolkitContext({
+		cameraParametersUrl: THREEx.ArToolkitContext.baseURL + '../data/data/camera_para.dat',
+		detectionMode: 'mono',
+		maxDetectionRate: 30,
+		canvasWidth: 80*3,
+		canvasHeight: 60*3,
+	})
+	// initialize it
+	arToolkitContext.init(function onCompleted(){
+		// copy projection matrix to camera
+		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+	})
+	
+	//////////// settings /////////////////////////////////////////////
+	
+	////////////////////////////////////////////////
+	
+	///////////////////////////////////////////////////////////
+	
+	markerHiro = addMarkerHiro();
+	markerBomb = addMarkerBomb();
+	scene.add (markerHiro); 
+	scene.add (markerBomb); 
+	initSprite(markerHiro)
+	
+}
+	
+function addMarkerHiro(){
+	let markerRoot = new THREE.Group()
+
+	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+		type : 'pattern',
+		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.hiro'
+	})
+	cannon = makeCannon();
+	markerRoot.add (cannon);
+	ball = new THREE.Mesh (new THREE.CylinderGeometry(.028,0.1,0.25,20), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));
+    light = new THREE.PointLight( 0xffffff, 1);
+    markerRoot.add(ball);
+    markerRoot.add(light);
+	 nowPos = new THREE.Vector3();
+    prePos = new THREE.Vector3();
+    prePos.copy(barrel.localToWorld (new THREE.Vector3(0,1.8,0)));
+
+    //////////////////////////
+    q1 = new THREE.Quaternion(); // null rotation
+    q2 = new THREE.Quaternion();
+
+	/////////////////
+    v = 3.0;
+    g = 1.0;
+
+	
+	
+	var grid = new THREE.GridHelper (1, 10, 'red', 'white');
+	markerRoot.add (grid);
+	
+	return markerRoot;
+}
+
+function addMarkerBomb(){
+	let markerRoot = new THREE.Group()
+
+	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+		type : 'pattern',
+		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/bomb.patt'
+	})
+
+/*
+	// add a torus knot & a transparent box	
+	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
+	var material	= new THREE.MeshNormalMaterial();
+	var mesh	= new THREE.Mesh( geometry, material );
+	mesh.position.y	= 0.5
+	markerRoot.add (mesh);
+	
+	mesh = new THREE.Mesh (new THREE.BoxGeometry(1,1,1), 
+				new THREE.MeshNormalMaterial({transparent:true, opacity:0.3}));
+	mesh.position.y	= 0.5
+	markerRoot.add (mesh);
+*/
+
+	var loader = new THREE.TextureLoader();
+	loader.setCrossOrigin('');
+	texture = loader.load('https://i.imgur.com/1utWTdm.png');
+
+	
+	var torso = buildTorso(0.124, 0.191, 0.062);
+	markerRoot.add (torso);
+	
+	
+	var gridB = new THREE.GridHelper (1, 10, 'red', 'white');
+	markerRoot.add (gridB);
+			
+	return markerRoot;
+}
 
 function buildTorso(WW, HH, DD) {
 			  var geometry = new THREE.BufferGeometry();
@@ -159,183 +320,67 @@ function buildTorso(WW, HH, DD) {
 			  mesh.position.y = HH / 2;
 
 			  return torso;
-			}
-
-function init() {
-	clock = new THREE.Clock();
-	// init renderer
-	renderer	= new THREE.WebGLRenderer({
-		// antialias	: true,
-		alpha: true
-	});
-	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	// renderer.setPixelRatio( 1/2 );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	renderer.domElement.style.position = 'absolute'
-	renderer.domElement.style.top = '0px'
-	renderer.domElement.style.left = '0px'
-	document.body.appendChild( renderer.domElement );
-
-	stats = new Stats();
-	document.body.appendChild( stats.dom );
-
-	// init scene and camera
-	scene	= new THREE.Scene();
-	
-	// Create a BASIC camera
-	camera = new THREE.Camera();
-	scene.add(camera);
-
-	////////////////////////////////////////////////////////////////////////////////
-	//          handle arToolkitSource
-	////////////////////////////////////////////////////////////////////////////////
-
-	arToolkitSource = new THREEx.ArToolkitSource({
-		// to read from the webcam 
-		sourceType : 'webcam',
-	})
-
-	arToolkitSource.init(function onReady(){
-		onResize()
-	})
-	
-	// handle resize
-	window.addEventListener('resize', function(){
-		onResize()
-	})
-	function onResize(){
-		arToolkitSource.onResize()	
-		arToolkitSource.copySizeTo(renderer.domElement)	
-		if( arToolkitContext.arController !== null ){
-			arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
-		}	
-	}
-	////////////////////////////////////////////////////////////////////////////////
-	//          initialize arToolkitContext
-	////////////////////////////////////////////////////////////////////////////////
-	
-	arToolkitContext = new THREEx.ArToolkitContext({
-		cameraParametersUrl: THREEx.ArToolkitContext.baseURL + '../data/data/camera_para.dat',
-		detectionMode: 'mono',
-		maxDetectionRate: 30,
-		canvasWidth: 80*3,
-		canvasHeight: 60*3,
-	})
-	// initialize it
-	arToolkitContext.init(function onCompleted(){
-		// copy projection matrix to camera
-		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-	})
-	
-	
-	markerHiro = addMarkerHiro();
-	markerBomb = addMarkerBomb();
-	scene.add (markerHiro); 
-	scene.add (markerBomb); 
-	initSprite(markerHiro);
-}
-	
-function addMarkerHiro(){
-	let markerRoot = new THREE.Group()
-
-	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
-		type : 'pattern',
-		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.hiro'
-	})
-
-/*
-	// add a torus knot & a transparent box	
-	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
-	var material	= new THREE.MeshNormalMaterial();
-	var mesh	= new THREE.Mesh( geometry, material );
-	mesh.position.y	= 0.5
-	markerRoot.add (mesh);
-	
-	mesh = new THREE.Mesh (new THREE.BoxGeometry(1,1,1), 
-				new THREE.MeshNormalMaterial({transparent:true, opacity:0.3}));
-	mesh.position.y	= 0.5
-	markerRoot.add (mesh);
-*/
-	
-    
-
-    
-    ////////////////////////////////////////////////
-    
-  ///////////////////////////////////////////////////////////
-
-    cannon = makeCannon();
-    markerRoot.add(cannon);
-
-    /*targetBall = new THREE.Mesh(new THREE.OctahedronGeometry(0.3), new THREE.MeshBasicMaterial({
-      color: 'cyan',
-      wireframe: true
-    }));*/
-    //scene.add(targetBall);
-    target = new THREE.Vector3(7, 0, 0);
-    //targetBall.position.copy(target);
-  
-    ball = new THREE.Mesh (new THREE.CylinderGeometry(.028,0.1,0.25,20), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));
-    light = new THREE.PointLight( 0xffffff, 1);
-    markerRoot.add(ball);
-    markerRoot.add(light);
- 
-    nowPos = new THREE.Vector3();
-    prePos = new THREE.Vector3();
-    prePos.copy(barrel.localToWorld (new THREE.Vector3(0,1.8,0)));
-
-    //////////////////////////
-    q1 = new THREE.Quaternion(); // null rotation
-    q2 = new THREE.Quaternion();
-
-	/////////////////
-    v = 3.0;
-    g = 1.0;
-
-	
-	
-	var grid = new THREE.GridHelper (1, 10, 'red', 'white');
-	markerRoot.add (grid);
-			
-	return markerRoot;
 }	
 
-function addMarkerBomb(){
-	let markerRoot = new THREE.Group()
-
-	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
-		type : 'pattern',
-		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/bomb.patt'
-	})
-
-/*
-	// add a torus knot & a transparent box	
-	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
-	var material	= new THREE.MeshNormalMaterial();
-	var mesh	= new THREE.Mesh( geometry, material );
-	mesh.position.y	= 0.5
-	markerRoot.add (mesh);
+function animate() {
+	requestAnimationFrame (animate);
+	stats.update();
 	
-	mesh = new THREE.Mesh (new THREE.BoxGeometry(1,1,1), 
-				new THREE.MeshNormalMaterial({transparent:true, opacity:0.3}));
-	mesh.position.y	= 0.5
-	markerRoot.add (mesh);
-*/
+	if( arToolkitSource.ready === false )	return
+	arToolkitContext.update( arToolkitSource.domElement )
+	renderer.clear();
+	renderer.render (scene, camera);
+	/////////////////////////////////////
+	markerHiro.remove(points);
+	computeProjectile();
+	markerHiro.remove (markerHiro.getObjectByName('projectile'));
+	if(far == 1){
+		points = makeProjectile ();
+		points.name = 'projectile';
+		markerHiro.add (points);
+		let q3 = new THREE.Quaternion();
+		q3.setFromUnitVectors(new THREE.Vector3(1, 0, 0), cannon.localToWorld (new THREE.Vector3(1,0,0)).normalize());
+		points.quaternion.copy (q3);
+	}
 
-	var loader = new THREE.TextureLoader();
-	loader.setCrossOrigin('');
-	texture = loader.load('https://i.imgur.com/1utWTdm.png');
+	if (counter < counterN) {
+		computeInitPosVel();
+		markerHiro.remove (ball);
+		markerHiro.add (ball);
 
-	
-	var torso = buildTorso(0.124, 0.191, 0.062);
-	markerRoot.add (torso);
-	
-	
-	var gridB = new THREE.GridHelper (1, 10, 'red', 'white');
-	markerRoot.add (gridB);
-			
-	return markerRoot;
+		let alpha = counter / counterN;
+		let qm = q1.clone();
+
+		qm.slerp(q2, alpha);
+		cannon.quaternion.copy(qm);
+		console.log(ballout);
+		++counter;
+	}else{
+		if(ballout == 1){
+		ballout = 0; 
+		console.log(ballout);
+		}
+	}
+
+	if (pos === undefined) {
+		computeInitPosVel();
+		return;
+	}
+
+	if (pos.y < 0){
+		markerHiro.remove (ball);
+		return;
+	}
+	// Euler's method
+	let dt = clock.getDelta();
+	vel.add (force.clone().multiplyScalar(dt));
+	pos.add (vel.clone().multiplyScalar(dt));
+	ball.position.copy (pos);
+	prePos.copy (nowPos);
+	nowPos.copy (pos);
+	ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());
 }
+
 
 function makeCannon() {
   let cannon = new THREE.Group();
@@ -349,21 +394,6 @@ function makeCannon() {
   
   cannon.add(body, barrelPart);
   return cannon;
-}
-
-function computeInitPosVel() {
-  //let barrel = cannon.children[1];
-  let L = target.length();
-  const SPEED = L*0.8;
-	vel = barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
-  barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED);
-  
-  
-  
-	pos = barrel.localToWorld (new THREE.Vector3(0,2.2,0));
-	force = new THREE.Vector3(0,-12,0);
-  
-	force.add(force.clone().multiplyScalar(-0.002115));  
 }
 
 function computeProjectile() {
@@ -380,6 +410,33 @@ function computeProjectile() {
   return 1;
 }
 function makeProjectile () {
+	let cTheta = Math.cos(theta);
+  let sTheta = Math.sin(theta);
+  let a = -g/2/v/v/cTheta/cTheta;
+  let b = v*v/g*cTheta*sTheta;
+  let c = v*v/2/g*sTheta*sTheta;
+  
+  
+  return makeParabola (a, b, c);
+}
+
+
+function computeInitPosVel() {
+  //let barrel = cannon.children[1];
+  let L = target.length();
+  const SPEED = L*0.8;
+	vel = barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
+  barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED);
+  
+  
+  
+	pos = barrel.localToWorld (new THREE.Vector3(0,2.2,0));
+	force = new THREE.Vector3(0,-12,0);
+  
+	force.add(force.clone().multiplyScalar(-0.002115));  
+}
+
+ffunction makeProjectile () {
 	let cTheta = Math.cos(theta);
   let sTheta = Math.sin(theta);
   let a = -g/2/v/v/cTheta/cTheta;
@@ -410,95 +467,6 @@ function makeParabola (a, b, c) {
   parabola.computeLineDistances(); // required for LineDashedMaterial
   return parabola;
   
-}
-
-
-function animate() {
-	requestAnimationFrame (animate);
-	stats.update();
-	let dt = clock.getDelta();
-	
-	if( arToolkitSource.ready === false )	return
-	arToolkitContext.update( arToolkitSource.domElement );
-
-
-	renderer.clear();
-	renderer.render(scene,camera);
-	
-	if (markerBomb.visible === true) {
-		target.copy(markerBomb.position.clone());
-		q1.copy(q2);  // save current (old) orientation
-    
-		N = 100;
-		counter = 0;
-    
-		q2.setFromUnitVectors(new THREE.Vector3(1, 0, 0), target.clone().normalize());  // compute new oriention
-		cannon.quaternion.copy (q2);
-		flag = computeProjectile();
-		computeInitPosVel();
-		markerHiro.remove(ball);
-		markerHiro.remove(light);
-		markerHiro.add(ball);
-		markerHiro.add(light);
-		
-		if (counter > N) {
-			markerHiro.remove (scene.getObjectByName('projectile'));
-			return;
-		  }
-
-		  if (counter < N) {
-		  computeInitPosVel();
-			markerHiro.remove(ball);
-			markerHiro.remove(light);
-			markerHiro.add(ball);
-			markerHiro.add(light);
-			markerHiro.remove (scene.getObjectByName('projectile'));
-			let alpha = counter / N;
-			let qm = q1.clone();
-			qm.slerp(q2, alpha);
-			cannon.quaternion.copy(qm);
-			++counter;
-		  }
-		  
-		  if(counter == N)
-		  {
-			
-			
-		  markerHiro.remove (scene.getObjectByName('projectile'));
-		  
-		  if(flag)
-		  {
-			let parabola = makeProjectile();
-				parabola.name = 'projectile';
-				//scene.remove (scene.getObjectByName('projectile'));
-				markerHiro.add(parabola);
-				parabola.quaternion.copy (q2);
-			//console.log(pos);
-			if(pos.y>=0)
-			{
-				if(pos.x<=1.24)
-				{
-					setTimeout (spriteAnimate, 0);
-				}
-			vel.add (force.clone().multiplyScalar(dt));
-			pos.add (vel.clone().multiplyScalar(dt));
-			ball.position.copy (pos);
-			light.position.copy (pos);
-			light.position.y += 1.2;
-				prePos.copy (nowPos);
-			nowPos.copy (pos);
-		  
-			ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());
-			}
-		   }
-			  
-		  }
-		}
-
-	
-	
-	
-	renderer.render (scene, camera);	
 }
 
 </script></body>
