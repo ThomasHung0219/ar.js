@@ -421,7 +421,11 @@ function animate() {
 	if( arToolkitSource.ready === false )	return
 	arToolkitContext.update( arToolkitSource.domElement );
 
-	/*if (markerBomb.visible === true) {
+
+	renderer.clear();
+	renderer.render(scene,camera);
+	
+	if (markerBomb.visible === true) {
 		target.copy(markerBomb.position.clone());
 		q1.copy(q2);  // save current (old) orientation
     
@@ -489,7 +493,7 @@ function animate() {
 		   }
 			  
 		  }
-		}*/
+		}
 
 	
 	
