@@ -54,7 +54,7 @@ var pos, vel, force;
 var nowPos, prePos;
 /////////////////////
 var counter, N , CN, angle;
-var v, g;
+var v, g,toBomb;
 var pickables = [], mouse, raycaster;
 var target, targetBall;
 var q1, q2;
@@ -363,7 +363,8 @@ function animate() {
 	renderer.render(scene,camera);
 	
 	if (markerBomb.visible === true) {
-		target.copy(markerBomb.position.clone());
+		toBomb = markerHiro.worldToLocal (markerBomb.localToWorld (new THREE.Vector3(0,0,0)));
+		target.copy(toBomb.position.clone());
 		q1.copy(q2);  // save current (old) orientation
     
 		N = 100;
