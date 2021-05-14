@@ -275,7 +275,7 @@ function addMarkerHiro(){
     target = new THREE.Vector3(7, 0, 0);
     //targetBall.position.copy(target);
   
-    ball = new THREE.Mesh (new THREE.CylinderGeometry(.052,0.2,0.5,20), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));
+    ball = new THREE.Mesh (new THREE.CylinderGeometry(.028,0.1,0.25,20), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));
     light = new THREE.PointLight( 0xffffff, 1);
     markerRoot.add(ball);
     markerRoot.add(light);
@@ -327,12 +327,12 @@ function addMarkerBomb(){
 	texture = loader.load('https://i.imgur.com/1utWTdm.png');
 
 	
-	var torso = buildTorso(1.24, 1.91, 0.62);
+	var torso = buildTorso(0.124, 0.191, 0.062);
 	markerRoot.add (torso);
 	
 	
-	var grid = new THREE.GridHelper (1, 10, 'red', 'white');
-	markerRoot.add (grid);
+	var gridB = new THREE.GridHelper (1, 10, 'red', 'white');
+	markerRoot.add (gridB);
 			
 	return markerRoot;
 }
@@ -340,13 +340,13 @@ function addMarkerBomb(){
 function makeCannon() {
   let cannon = new THREE.Group();
   body = new THREE.Mesh (new THREE.SphereGeometry(
-    1.0,20,20, Math.PI+Math.PI*0.1,Math.PI*1.8,0,Math.PI/2), new THREE.MeshNormalMaterial());
+    0.5,20,20, Math.PI+Math.PI*0.1,Math.PI*1.8,0,Math.PI/2), new THREE.MeshNormalMaterial());
   barrelPart = new THREE.Group();
-  barrel = new THREE.Mesh (new THREE.CylinderGeometry(0.2,0.2,2.0), new THREE.MeshNormalMaterial());
+  barrel = new THREE.Mesh (new THREE.CylinderGeometry(0.1,0.1,1.0), new THREE.MeshNormalMaterial());
   barrelPart.add (barrel);
-  barrel.position.y = 1.0;
+  barrel.position.y = 0.5;
   barrelPart.rotation.z = -Math.PI / 4;
-
+  
   cannon.add(body, barrelPart);
   return cannon;
 }
