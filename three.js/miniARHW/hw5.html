@@ -38,6 +38,7 @@ body {
 	miniARHW HW05<br>
 	Cannon <br>
 	<p id='msg'></p>
+	
 </div>
 
 <script>
@@ -224,7 +225,7 @@ function addMarkerBomb(){
 
 	var loader = new THREE.TextureLoader();
 	loader.setCrossOrigin('');
-	texture = loader.load('https://i.imgur.com/1utWTdm.png');
+	texture = loader.load('https://i.imgur.com/PUwq86t.png');
 
 	
 	var torso = buildTorso(0.124, 0.191, 0.062);
@@ -499,7 +500,7 @@ function makeParabola (a, b, c) {
   for (let i = 0; i <= N; i++) {
   	xi = x0 + i*dx;
     yi = a*(xi-b)*(xi-b) + c;
-    points.push (new THREE.Vector3(xi,yi,0));
+    points.push (toBomb.add(new THREE.Vector3(xi,yi,0)));
   }
   
   let geometry = new THREE.BufferGeometry().setFromPoints(points);
