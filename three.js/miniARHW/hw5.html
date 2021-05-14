@@ -1,53 +1,240 @@
 <!DOCTYPE html>
 <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
+
 <!-- three.js library -->
 <script src='../examples/vendor/three.js/build/three.min.js'></script>
 <script src="../examples/vendor/three.js/examples/js/libs/stats.min.js"></script>
-
-<script src="https://threejs.org/build/three.min.js"></script>
-<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <!-- ar.js -->
 <script src="explode.js"></script>
 <script src="../build/ar.js"></script>
 <script>THREEx.ArToolkitContext.baseURL = '../'</script>
+<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
 <head>
 <title> miniAR HW05 </title>
-</head>
-<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
-<div style='position: absolute; top: 10px; width:100%; text-align: center; z-index: 1;'>
-<a href="https://github.com/jeromeetienne/AR.js/" target="_blank">AR.js</a>
-	 - three.js<br>
-Minimal Version<br>
-Distance
-<p id='msg'></p>
-</div> 
+<style>
+#info {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00
+}
 
+body {
+  overflow: hidden;
+}
+
+</style>
+</head>
+
+<body>
+<div id="info">
+<a href="https://github.com/weslia/ar.js" target="_blank">ar.js</a> - three.js<br>
+	miniARHW HW05<br>
+	Cannon <br>
+	<p id='msg'></p>
+</div>
 
 <script>
-
 // global variables
 var renderer, scene, camera;
 var stats;
 var arToolKitSource, arToolKitContext;
 var markerHiro,markerBomb;
-var cannon;
+/////////////////////////////////////////////////
+var cannon, barrel,body,barrelPart;
+var clock;
+var ball, line = new THREE.Group(), points;
+var pos, vel, force;
+var nowPos, prePos;
+/////////////////////
 var counter, N , CN, angle;
+var v, g;
 var pickables = [], mouse, raycaster;
 var target, targetBall;
-var v, g;
-var theta;
-var q1,q2,flag;
-var ball,light,barrel,body,barrelPart;
-var nowPos, prePos;
-var pos, vel, force;
-var clock;
-
-
+var q1, q2;
 
 init();
 animate();
+
+function init() {
+	// init renderer
+	renderer	= new THREE.WebGLRenderer({
+		// antialias	: true,
+		alpha: true
+	});
+	renderer.setClearColor(new THREE.Color('lightgrey'), 0);
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.domElement.style.position = 'absolute'
+	renderer.domElement.style.top = '0px'
+	renderer.domElement.style.left = '0px'
+	document.body.appendChild( renderer.domElement );
+
+	stats = new Stats();
+	document.body.appendChild( stats.dom );
+
+	// init scene and camera
+	scene	= new THREE.Scene();
+	
+	// Create a BASIC camera
+	camera = new THREE.Camera();
+	scene.add(camera);
+
+	////////////////////////////////////////////////////////////////////////////////
+	//          handle arToolkitSource
+	////////////////////////////////////////////////////////////////////////////////
+
+	arToolkitSource = new THREEx.ArToolkitSource({
+		// to read from the webcam 
+		sourceType : 'webcam',
+	})
+
+	arToolkitSource.init(function onReady(){
+		onResize()
+	})
+	
+	// handle resize
+	window.addEventListener('resize', function(){
+		onResize()
+	})
+	function onResize(){
+		arToolkitSource.onResize()	
+		arToolkitSource.copySizeTo(renderer.domElement)	
+		if( arToolkitContext.arController !== null ){
+			arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
+		}	
+	}
+	////////////////////////////////////////////////////////////////////////////////
+	//          initialize arToolkitContext
+	////////////////////////////////////////////////////////////////////////////////
+	
+	arToolkitContext = new THREEx.ArToolkitContext({
+		cameraParametersUrl: THREEx.ArToolkitContext.baseURL + '../data/data/camera_para.dat',
+		detectionMode: 'mono',
+		maxDetectionRate: 30,
+		canvasWidth: 80*3,
+		canvasHeight: 60*3,
+	})
+	// initialize it
+	arToolkitContext.init(function onCompleted(){
+		// copy projection matrix to camera
+		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+	})
+	markerHiro = addMarkerHiro();
+	markerBomb = addMarkerBomb();
+	scene.add (markerHiro); 
+	scene.add (markerBomb); 
+	initSprite(markerHiro); 
+	
+	
+}
+	
+function addMarkerHiro(){
+	let markerRoot = new THREE.Group()
+
+	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+		type : 'pattern',
+		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.hiro'
+	})
+
+/*
+	// add a torus knot & a transparent box	
+	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
+	var material	= new THREE.MeshNormalMaterial();
+	var mesh	= new THREE.Mesh( geometry, material );
+	mesh.position.y	= 0.5
+	markerRoot.add (mesh);
+	
+	mesh = new THREE.Mesh (new THREE.BoxGeometry(1,1,1), 
+				new THREE.MeshNormalMaterial({transparent:true, opacity:0.3}));
+	mesh.position.y	= 0.5
+	markerRoot.add (mesh);
+*/
+	
+    
+
+    
+    ////////////////////////////////////////////////
+    
+  ///////////////////////////////////////////////////////////
+
+    cannon = makeCannon();
+    markerRoot.add(cannon);
+
+    /*targetBall = new THREE.Mesh(new THREE.OctahedronGeometry(0.3), new THREE.MeshBasicMaterial({
+      color: 'cyan',
+      wireframe: true
+    }));*/
+    //scene.add(targetBall);
+    target = new THREE.Vector3(7, 0, 0);
+    //targetBall.position.copy(target);
+  
+    ball = new THREE.Mesh (new THREE.CylinderGeometry(.028,0.1,0.25,20), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));
+    light = new THREE.PointLight( 0xffffff, 1);
+    markerRoot.add(ball);
+    markerRoot.add(light);
+ 
+    nowPos = new THREE.Vector3();
+    prePos = new THREE.Vector3();
+    prePos.copy(barrel.localToWorld (new THREE.Vector3(0,1.8,0)));
+
+    //////////////////////////
+    q1 = new THREE.Quaternion(); // null rotation
+    q2 = new THREE.Quaternion();
+
+	/////////////////
+    v = 3.0;
+    g = 1.0;
+
+	
+	
+	var grid = new THREE.GridHelper (1, 10, 'red', 'white');
+	markerRoot.add (grid);
+			
+	return markerRoot;
+}
+
+function addMarkerBomb(){
+	let markerRoot = new THREE.Group()
+
+	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+		type : 'pattern',
+		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/bomb.patt'
+	})
+
+/*
+	// add a torus knot & a transparent box	
+	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
+	var material	= new THREE.MeshNormalMaterial();
+	var mesh	= new THREE.Mesh( geometry, material );
+	mesh.position.y	= 0.5
+	markerRoot.add (mesh);
+	
+	mesh = new THREE.Mesh (new THREE.BoxGeometry(1,1,1), 
+				new THREE.MeshNormalMaterial({transparent:true, opacity:0.3}));
+	mesh.position.y	= 0.5
+	markerRoot.add (mesh);
+*/
+
+	var loader = new THREE.TextureLoader();
+	loader.setCrossOrigin('');
+	texture = loader.load('https://i.imgur.com/1utWTdm.png');
+
+	
+	var torso = buildTorso(0.124, 0.191, 0.062);
+	markerRoot.add (torso);
+	
+	
+	var gridB = new THREE.GridHelper (1, 10, 'red', 'white');
+	markerRoot.add (gridB);
+			
+	return markerRoot;
+}
 
 function buildTorso(WW, HH, DD) {
 			  var geometry = new THREE.BufferGeometry();
@@ -159,257 +346,6 @@ function buildTorso(WW, HH, DD) {
 			  mesh.position.y = HH / 2;
 
 			  return torso;
-			}
-
-function init() {
-	clock = new THREE.Clock();
-	// init renderer
-	renderer	= new THREE.WebGLRenderer({
-		// antialias	: true,
-		alpha: true
-	});
-	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	// renderer.setPixelRatio( 1/2 );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	renderer.domElement.style.position = 'absolute'
-	renderer.domElement.style.top = '0px'
-	renderer.domElement.style.left = '0px'
-	document.body.appendChild( renderer.domElement );
-
-	stats = new Stats();
-	document.body.appendChild( stats.dom );
-
-	// init scene and camera
-	scene	= new THREE.Scene();
-	
-	// Create a BASIC camera
-	camera = new THREE.Camera();
-	scene.add(camera);
-
-	////////////////////////////////////////////////////////////////////////////////
-	//          handle arToolkitSource
-	////////////////////////////////////////////////////////////////////////////////
-
-	arToolkitSource = new THREEx.ArToolkitSource({
-		// to read from the webcam 
-		sourceType : 'webcam',
-	})
-
-	arToolkitSource.init(function onReady(){
-		onResize()
-	})
-	
-	// handle resize
-	window.addEventListener('resize', function(){
-		onResize()
-	})
-	function onResize(){
-		arToolkitSource.onResize()	
-		arToolkitSource.copySizeTo(renderer.domElement)	
-		if( arToolkitContext.arController !== null ){
-			arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
-		}	
-	}
-	////////////////////////////////////////////////////////////////////////////////
-	//          initialize arToolkitContext
-	////////////////////////////////////////////////////////////////////////////////
-	
-	arToolkitContext = new THREEx.ArToolkitContext({
-		cameraParametersUrl: THREEx.ArToolkitContext.baseURL + '../data/data/camera_para.dat',
-		detectionMode: 'mono',
-		maxDetectionRate: 30,
-		canvasWidth: 80*3,
-		canvasHeight: 60*3,
-	})
-	// initialize it
-	arToolkitContext.init(function onCompleted(){
-		// copy projection matrix to camera
-		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-	})
-	
-	
-	markerHiro = addMarkerHiro();
-	markerBomb = addMarkerBomb();
-	scene.add (markerHiro); 
-	scene.add (markerBomb); 
-	initSprite(markerHiro);
-}
-	
-function addMarkerHiro(){
-	let markerRoot = new THREE.Group()
-
-	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
-		type : 'pattern',
-		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.hiro'
-	})
-
-/*
-	// add a torus knot & a transparent box	
-	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
-	var material	= new THREE.MeshNormalMaterial();
-	var mesh	= new THREE.Mesh( geometry, material );
-	mesh.position.y	= 0.5
-	markerRoot.add (mesh);
-	
-	mesh = new THREE.Mesh (new THREE.BoxGeometry(1,1,1), 
-				new THREE.MeshNormalMaterial({transparent:true, opacity:0.3}));
-	mesh.position.y	= 0.5
-	markerRoot.add (mesh);
-*/
-	
-    
-
-    
-    ////////////////////////////////////////////////
-    
-  ///////////////////////////////////////////////////////////
-
-    cannon = makeCannon();
-    markerRoot.add(cannon);
-
-    /*targetBall = new THREE.Mesh(new THREE.OctahedronGeometry(0.3), new THREE.MeshBasicMaterial({
-      color: 'cyan',
-      wireframe: true
-    }));*/
-    //scene.add(targetBall);
-    target = new THREE.Vector3(7, 0, 0);
-    //targetBall.position.copy(target);
-  
-    ball = new THREE.Mesh (new THREE.CylinderGeometry(.052,0.2,0.5,20), new THREE.MeshPhongMaterial({color:'yellow',wireframe:true}));
-    light = new THREE.PointLight( 0xffffff, 1);
-    markerRoot.add(ball);
-    markerRoot.add(light);
- 
-    nowPos = new THREE.Vector3();
-    prePos = new THREE.Vector3();
-    prePos.copy(barrel.localToWorld (new THREE.Vector3(0,1.8,0)));
-
-    //////////////////////////
-    q1 = new THREE.Quaternion(); // null rotation
-    q2 = new THREE.Quaternion();
-
-	/////////////////
-    v = 3.0;
-    g = 1.0;
-
-	
-	
-	var grid = new THREE.GridHelper (1, 10, 'red', 'white');
-	markerRoot.add (grid);
-			
-	return markerRoot;
-}	
-
-function addMarkerBomb(){
-	let markerRoot = new THREE.Group()
-
-	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
-		type : 'pattern',
-		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/bomb.patt'
-	})
-
-/*
-	// add a torus knot & a transparent box	
-	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
-	var material	= new THREE.MeshNormalMaterial();
-	var mesh	= new THREE.Mesh( geometry, material );
-	mesh.position.y	= 0.5
-	markerRoot.add (mesh);
-	
-	mesh = new THREE.Mesh (new THREE.BoxGeometry(1,1,1), 
-				new THREE.MeshNormalMaterial({transparent:true, opacity:0.3}));
-	mesh.position.y	= 0.5
-	markerRoot.add (mesh);
-*/
-
-	var loader = new THREE.TextureLoader();
-	loader.setCrossOrigin('');
-	texture = loader.load('https://i.imgur.com/1utWTdm.png');
-
-	
-	var torso = buildTorso(1.24, 1.91, 0.62);
-	markerRoot.add (torso);
-	
-	
-	var grid = new THREE.GridHelper (1, 10, 'red', 'white');
-	markerRoot.add (grid);
-			
-	return markerRoot;
-}
-
-function makeCannon() {
-  let cannon = new THREE.Group();
-  body = new THREE.Mesh (new THREE.SphereGeometry(
-    1.0,20,20, Math.PI+Math.PI*0.1,Math.PI*1.8,0,Math.PI/2), new THREE.MeshNormalMaterial());
-  barrelPart = new THREE.Group();
-  barrel = new THREE.Mesh (new THREE.CylinderGeometry(0.2,0.2,2.0), new THREE.MeshNormalMaterial());
-  barrelPart.add (barrel);
-  barrel.position.y = 1.0;
-  barrelPart.rotation.z = -Math.PI / 4;
-
-  cannon.add(body, barrelPart);
-  return cannon;
-}
-
-function computeInitPosVel() {
-  //let barrel = cannon.children[1];
-  let L = target.length();
-  const SPEED = L*0.8;
-	vel = barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
-  barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED);
-  
-  
-  
-	pos = barrel.localToWorld (new THREE.Vector3(0,2.2,0));
-	force = new THREE.Vector3(0,-12,0);
-  
-	force.add(force.clone().multiplyScalar(-0.002115));  
-}
-
-function computeProjectile() {
-	let L = target.length();
-  theta = Math.asin(L*g/v/v)/2;
-  //console.log (L*g/v/v)
-  if (L*g/v/v > 1) {
-  	$('#msg').text ('too far to hit');
-    return 0;
-  } else {
-  	$('#msg').text ('reachable')
-  }
-  cannon.children[1].rotation.z = -(Math.PI/2 - theta);
-  return 1;
-}
-function makeProjectile () {
-	let cTheta = Math.cos(theta);
-  let sTheta = Math.sin(theta);
-  let a = -g/2/v/v/cTheta/cTheta;
-  let b = v*v/g*cTheta*sTheta;
-  let c = v*v/2/g*sTheta*sTheta;
-  
-  
-  return makeParabola (a, b, c);
-}
-
-function makeParabola (a, b, c) {
-	let xRange = Math.sqrt(-a*c)*2/a;
-  const N = 20;
-  let dx = xRange/20;
-  
-  let points = [];
-  let x0 = b - xRange/2;
-  for (let i = 0; i <= N; i++) {
-  	xi = x0 + i*dx;
-    yi = a*(xi-b)*(xi-b) + c;
-    points.push (new THREE.Vector3(xi,yi,0));
-  }
-  
-  let geometry = new THREE.BufferGeometry().setFromPoints(points);
-  let parabola = new THREE.Line (geometry, new THREE.LineDashedMaterial({scale: 1,
-	dashSize: 3,
-	gapSize: 1,color:'cyan'}));
-  parabola.computeLineDistances(); // required for LineDashedMaterial
-  return parabola;
-  
 }
 
 
@@ -459,7 +395,7 @@ function animate() {
 			cannon.quaternion.copy(qm);
 			++counter;
 		  }
-		    
+		  
 		  if(counter == N)
 		  {
 			
@@ -494,11 +430,83 @@ function animate() {
 			  
 		  }
 		}
-
-	
-	
-	
-	renderer.render (scene, camera);	
 }
+
+function makeCannon() {
+  let cannon = new THREE.Group();
+  body = new THREE.Mesh (new THREE.SphereGeometry(
+    0.5,20,20, Math.PI+Math.PI*0.1,Math.PI*1.8,0,Math.PI/2), new THREE.MeshNormalMaterial());
+  barrelPart = new THREE.Group();
+  barrel = new THREE.Mesh (new THREE.CylinderGeometry(0.1,0.1,1.0), new THREE.MeshNormalMaterial());
+  barrelPart.add (barrel);
+  barrel.position.y = 0.5;
+  barrelPart.rotation.z = -Math.PI / 4;
+  
+  cannon.add(body, barrelPart);
+  return cannon;
+}
+
+function computeProjectile() {
+	let L = target.length();
+  theta = Math.asin(L*g/v/v)/2;
+  //console.log (L*g/v/v)
+  if (L*g/v/v > 1) {
+  	$('#msg').text ('too far to hit');
+    return 0;
+  } else {
+  	$('#msg').text ('reachable')
+  }
+  cannon.children[1].rotation.z = -(Math.PI/2 - theta);
+  return 1;
+}
+
+function computeInitPosVel() {
+  //let barrel = cannon.children[1];
+  let L = target.length();
+  const SPEED = L*0.8;
+	vel = barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
+  barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED);
+  
+  
+  
+	pos = barrel.localToWorld (new THREE.Vector3(0,2.2,0));
+	force = new THREE.Vector3(0,-12,0);
+  
+	force.add(force.clone().multiplyScalar(-0.002115));  
+}
+
+function makeProjectile () {
+	let cTheta = Math.cos(theta);
+  let sTheta = Math.sin(theta);
+  let a = -g/2/v/v/cTheta/cTheta;
+  let b = v*v/g*cTheta*sTheta;
+  let c = v*v/2/g*sTheta*sTheta;
+  
+  
+  return makeParabola (a, b, c);
+}
+
+function makeParabola (a, b, c) {
+	let xRange = Math.sqrt(-a*c)*2/a;
+  const N = 20;
+  let dx = xRange/20;
+  
+  let points = [];
+  let x0 = b - xRange/2;
+  for (let i = 0; i <= N; i++) {
+  	xi = x0 + i*dx;
+    yi = a*(xi-b)*(xi-b) + c;
+    points.push (new THREE.Vector3(xi,yi,0));
+  }
+  
+  let geometry = new THREE.BufferGeometry().setFromPoints(points);
+  let parabola = new THREE.Line (geometry, new THREE.LineDashedMaterial({scale: 1,
+	dashSize: 3,
+	gapSize: 1,color:'cyan'}));
+  parabola.computeLineDistances(); // required for LineDashedMaterial
+  return parabola;
+  
+}
+
 
 </script></body>
