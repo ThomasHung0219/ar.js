@@ -390,7 +390,7 @@ function animate() {
 			markerHiro.add(light);
 			markerHiro.remove (scene.getObjectByName('projectile'));
 			let alpha = counter / N;
-			let qm = q1.clone();
+			let qm = q1.clone(); 
 			qm.slerp(q2, alpha);
 			cannon.quaternion.copy(qm);
 			++counter;
