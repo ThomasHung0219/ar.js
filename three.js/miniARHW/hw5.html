@@ -125,6 +125,7 @@ function init() {
 		// copy projection matrix to camera
 		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
 	})
+	clock = new THREE.Clock();
 	markerHiro = addMarkerHiro();
 	markerBomb = addMarkerBomb();
 	scene.add (markerHiro); 
