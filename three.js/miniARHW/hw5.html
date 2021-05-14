@@ -393,6 +393,16 @@ function animate() {
 			markerHiro.add(ball);
 			markerHiro.add(light);
 			markerHiro.remove (scene.getObjectByName('projectile'));
+			
+			if(flag)
+			{
+				let parabola = makeProjectile();
+				parabola.name = 'projectile';
+				//scene.remove (scene.getObjectByName('projectile'));
+				markerHiro.add(parabola);
+				parabola.quaternion.copy (q2);
+			}
+			
 			let alpha = counter / N;
 			let qm = q1.clone();
 			qm.slerp(q2, alpha);
