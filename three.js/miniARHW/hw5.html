@@ -22,7 +22,7 @@
   width: 100%; 
   padding: 10px;
   text-align: center;
-  color: #00ffff
+  color: #ffff00
 }
 
 body {
@@ -131,7 +131,7 @@ function init() {
 	markerBomb = addMarkerBomb();
 	scene.add (markerHiro); 
 	scene.add (markerBomb); 
-	initSprite(markerHiro); 
+	initSprite(markerBomb); 
 	
 	
 }
@@ -382,7 +382,7 @@ function animate() {
 		markerHiro.add(light);
 		
 		if (counter > CN) {
-			markerHiro.remove (scene.getObjectByName('projectile'));
+			markerHiro.remove (markerHiro.getObjectByName('projectile'));
 			return;
 		  }
 
@@ -392,8 +392,9 @@ function animate() {
 			markerHiro.remove(light);
 			markerHiro.add(ball);
 			markerHiro.add(light);
-			markerHiro.remove (scene.getObjectByName('projectile'));
+			markerHiro.remove (markerHiro.getObjectByName('projectile'));
 			
+
 			if(flag)
 			{
 				let parabola = makeProjectile();
@@ -403,24 +404,30 @@ function animate() {
 				parabola.quaternion.copy (q2);
 				if(pos.y>=0)
 				{
-					if(pos.x<=0.496||pos.z<=0.248)
+					/*if(pos.x<=0.496||pos.z<=0.248)
 					{
-						setTimeout (spriteAnimate, 0);
-					}
+						
+					}*/
 				vel.add (force.clone().multiplyScalar(dt));
 				pos.add (vel.clone().multiplyScalar(dt));
 				ball.position.copy (pos);
 				light.position.copy (pos);
 				light.position.y += 1.2;
-					prePos.copy (nowPos);
+				prePos.copy (nowPos);
 				nowPos.copy (pos);
 			  
 				ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());
 				}
+				
+				else{
+					setTimeout (spriteAnimate, 0);
+				}
 			}
-			
+
+
 			let alpha = counter / CN;
 			let qm = q1.clone();
+
 			qm.slerp(q2, alpha);
 			cannon.quaternion.copy(qm);
 			++counter;
@@ -440,6 +447,7 @@ function animate() {
 				markerHiro.add(parabola);
 				parabola.quaternion.copy (q2);
 			//console.log(pos);
+
 			if(pos.y>=0)
 			{
 				if(pos.x<=0.496||pos.z<=0.248)
@@ -456,7 +464,9 @@ function animate() {
 		  
 			ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());
 			}
+
 		   }
+		   
 			  
 		  }
 		}
