@@ -48,7 +48,7 @@ var stats;
 var arToolKitSource, arToolKitContext;
 var markerHiro,markerBomb;
 /////////////////////////////////////////////////
-var cannon, barrel,body,barrelPart;
+var cannon, barrel,body,barrelPart,torso;
 var clock;
 var ball, line = new THREE.Group(), points;
 var pos, vel, force;
@@ -228,7 +228,7 @@ function addMarkerBomb(){
 	texture = loader.load('https://i.imgur.com/PUwq86t.png');
 
 	
-	var torso = buildTorso(0.496, 0.764, 0.248);
+	torso = buildTorso(0.496, 0.764, 0.248);
 	markerRoot.add (torso);
 	
 	
@@ -365,7 +365,7 @@ function animate() {
 	
 	if (markerBomb.visible === true) {
 		toBomb = markerHiro.worldToLocal (markerBomb.localToWorld (new THREE.Vector3(0,0,0)));
-		
+		markerBomb.add (torso);
 		target.copy(toBomb);
 		q1.copy(q2);  // save current (old) orientation
     
@@ -421,6 +421,7 @@ function animate() {
 				
 				else{
 					setTimeout (spriteAnimate, 0);
+					markerBomb.remove (torso);
 				}
 			}
 
