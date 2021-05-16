@@ -376,10 +376,7 @@ function animate() {
 		cannon.quaternion.copy (q2);
 		flag = computeProjectile();
 		computeInitPosVel();
-		markerHiro.remove(ball);
-		markerHiro.remove(light);
-		markerHiro.add(ball);
-		markerHiro.add(light);
+		
 		
 		if (counter > CN) {
 			markerHiro.remove (markerHiro.getObjectByName('projectile'));
