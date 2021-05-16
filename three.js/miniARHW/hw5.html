@@ -506,12 +506,12 @@ function computeInitPosVel() {
   $('#msg').css ('color','black' );
   let L = target.length();
   const SPEED = L*0.8;
-	vel = barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
-  barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED);
+	vel = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
+  barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED));
   
   
   
-	pos = barrel.localToWorld (new THREE.Vector3(0,2.2,0));
+	pos = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,2.2,0)));
 	force = new THREE.Vector3(0,-12,0);
   
 	force.add(force.clone().multiplyScalar(-0.002115));  
