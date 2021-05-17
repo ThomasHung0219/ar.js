@@ -418,7 +418,7 @@ function animate() {
 				if(pos==undefined)
 				{
 					computeInitPosVel();
-					flagB=1;
+					$('#msg').css ('color','black' );
 				}
 				
 				
@@ -429,10 +429,6 @@ function animate() {
 				parabola.quaternion.copy (q2);
 				if(pos.y>=0)
 				{
-					/*if(pos.x<=0.496||pos.z<=0.248)
-					{
-						
-					}*/
 				
 				vel.add (force.clone().multiplyScalar(dt));
 				pos.add (vel.clone().multiplyScalar(dt));
@@ -450,8 +446,9 @@ function animate() {
                 
                         
                 if (distance <= 1.1) {
-                    markerBomb.children[1].visible = false;
-                     setTimeout (spriteAnimate, 0);       
+                    
+                     setTimeout (spriteAnimate, 0);     
+					 markerBomb.children[1].visible = false;					 
                     }
 				}
 				
@@ -466,6 +463,7 @@ function animate() {
 			markerBomb.children[1].visible = true;
 			flag=0;
 			//flagB=0;
+			pos=undefined
 			CN = 100;
 			counter = 0;
 		}
@@ -501,7 +499,7 @@ function computeProjectile() {
 
 function computeInitPosVel() {
   //let barrel = cannon.children[1];
-  $('#msg').css ('color','black' );
+  
   let L = target.length();
   const SPEED = L*0.8;
 	vel = barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
