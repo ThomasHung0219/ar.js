@@ -449,7 +449,7 @@ function animate() {
 				var vector = ball.worldToLocal(markerBomb.localToWorld(new THREE.Vector3()));
                 var distance = vector.length();
                 
-				if(toBomb.x<0)
+				/*if(toBomb.x<0)
 					tempx = -1;
 				if(toBomb.z<0)
 					tempz = -1;
@@ -465,11 +465,19 @@ function animate() {
 			         CN = 100;
 			         counter = 0;
 					 return;
-				}
+				}*/
 				
-                /*if (distance <= 0.5) {
-                    
-                    }*/
+                if (distance <= 0.5) {
+                    $('#msg').css ('color','black' );
+                     setTimeout (spriteAnimate, 0);     
+					 markerBomb.children[1].visible = false;	
+					 flag=0;
+					 flagB=0;
+			         pos=undefined
+			         CN = 100;
+			         counter = 0;
+					 return;
+                    }
 				}
 				
 				
@@ -479,7 +487,7 @@ function animate() {
 		  }
 		  q2.setFromUnitVectors(new THREE.Vector3(1, 0, 0), target.clone().normalize());  // compute new oriention
 		}
-		else{
+		 else{
 			markerBomb.children[1].visible = true;
 			flag=0;
 			flagB=0;
