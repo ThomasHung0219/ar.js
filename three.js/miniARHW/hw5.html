@@ -429,7 +429,7 @@ function animate() {
                 
                         
                 if (distance <= 1.1) {
-                    markerKanji.children[1].visible = false;
+                    markerBomb.children[1].visible = false;
                      setTimeout (spriteAnimate, 0);       
                     }
 				}
@@ -486,7 +486,7 @@ function animate() {
 		  }
 		}
 		else{
-			markerKanji.children[1].visible = true;
+			markerBomb.children[1].visible = true;
 			flag=0;
 			flagB=0;
 		}
@@ -527,11 +527,11 @@ function computeInitPosVel() {
   const SPEED = L*0.8;
 	vel = barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
   barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED);
-	vel = markerHiro.worldToLocal (vel);
+	//vel = markerHiro.worldToLocal (vel);
   
   
 	pos = barrel.localToWorld (new THREE.Vector3(0,2.2,0));
-	pos = markerHiro.worldToLocal (pos);
+	//pos = markerHiro.worldToLocal (pos);
 	force = new THREE.Vector3(0,-12,0);
   
 	force.add(force.clone().multiplyScalar(-0.002115));  
