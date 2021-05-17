@@ -450,10 +450,16 @@ function animate() {
                 var distance = vector.length();
                 
                         
-                if (distance <= 1.1) {
+                if (distance <= 0.5) {
                     $('#msg').css ('color','black' );
                      setTimeout (spriteAnimate, 0);     
-					 markerBomb.children[1].visible = false;					 
+					 markerBomb.children[1].visible = false;	
+					 flag=0;
+					 flagB=0;
+			         pos=undefined
+			         CN = 100;
+			         counter = 0;
+					 return;
                     }
 				}
 				
