@@ -415,9 +415,10 @@ function animate() {
 		  
 			if(flag)
 			{
-				if(pos==undefined)
+				if(flagB ==0)
 				{
 					computeInitPosVel();
+					flagB=0;
 					$('#msg').css ('color','black' );
 				}
 				
@@ -462,7 +463,7 @@ function animate() {
 		else{
 			markerBomb.children[1].visible = true;
 			flag=0;
-			//flagB=0;
+			flagB=0;
 			pos=undefined
 			CN = 100;
 			counter = 0;
@@ -502,13 +503,13 @@ function computeInitPosVel() {
   
   let L = target.length();
   const SPEED = L*0.8;
-	vel = barrel.localToWorld (new THREE.Vector3(0,2.0,0)).sub (
-  barrel.localToWorld (new THREE.Vector3(0,0,0))).setLength (SPEED);
-	vel = markerHiro.worldToLocal (vel);
+	vel = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,2.0,0))).sub (
+  markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,0,0)))).setLength (SPEED);
+	//vel = markerHiro.worldToLocal (vel);
   
   
-	pos = barrel.localToWorld (new THREE.Vector3(0,2.2,0));
-	pos = markerHiro.worldToLocal (pos);
+	pos = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,2.2,0)));
+	//pos = markerHiro.worldToLocal (pos);
 	force = new THREE.Vector3(0,-12,0);
   
 	force.add(force.clone().multiplyScalar(-0.002115));  
