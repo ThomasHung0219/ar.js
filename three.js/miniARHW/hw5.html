@@ -408,7 +408,7 @@ function animate() {
 		  
 		else  if(counter == CN)
 		  {
-			
+			var tempx=1,tempz=1;
 			q1.copy(q2);
 			markerHiro.remove (scene.getObjectByName('projectile'));
 			flag = computeProjectile();
@@ -449,9 +449,14 @@ function animate() {
 				var vector = ball.worldToLocal(markerBomb.localToWorld(new THREE.Vector3()));
                 var distance = vector.length();
                 
-                        
-                if (distance <= 0.5) {
-                    $('#msg').css ('color','black' );
+				if(toBomb.x<0)
+					tempx = -1;
+				if(toBomb.z<0)
+					tempz = -1;
+					
+				if(pos.x>=toBomb.x*tempx&&pos.z>=toBomb.z*temp.z)
+				{
+					$('#msg').css ('color','black' );
                      setTimeout (spriteAnimate, 0);     
 					 markerBomb.children[1].visible = false;	
 					 flag=0;
@@ -460,7 +465,11 @@ function animate() {
 			         CN = 100;
 			         counter = 0;
 					 return;
-                    }
+				}
+				
+                /*if (distance <= 0.5) {
+                    
+                    }*/
 				}
 				
 				
