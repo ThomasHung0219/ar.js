@@ -434,7 +434,7 @@ function animate() {
 				markerHiro.remove(light);
 				markerHiro.add(ball);
 				markerHiro.add(light);
-				$('#msg').css ('color','black' );
+				
 				vel.add (force.clone().multiplyScalar(dt));
 				pos.add (vel.clone().multiplyScalar(dt));
 				
@@ -451,7 +451,7 @@ function animate() {
                 
                         
                 if (distance <= 1.1) {
-                    
+                    $('#msg').css ('color','black' );
                      setTimeout (spriteAnimate, 0);     
 					 markerBomb.children[1].visible = false;					 
                     }
