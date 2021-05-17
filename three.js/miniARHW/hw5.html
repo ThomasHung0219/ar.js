@@ -415,7 +415,7 @@ function animate() {
 		  
 			if(flag)
 			{
-				if(flagB==0)
+				if(pos==undefined)
 				{
 					computeInitPosVel();
 					flagB=1;
@@ -465,7 +465,7 @@ function animate() {
 		else{
 			markerBomb.children[1].visible = true;
 			flag=0;
-			flagB=0;
+			//flagB=0;
 			CN = 100;
 			counter = 0;
 		}
