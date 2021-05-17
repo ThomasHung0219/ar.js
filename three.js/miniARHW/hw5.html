@@ -407,8 +407,10 @@ function animate() {
 					}*/
 				//vel.add (force.clone().multiplyScalar(dt));
 				//pos.add (vel.clone().multiplyScalar(dt));
-				vel.add (force.clone().multiplyScalar(0.0166));
-				pos.add (vel.clone().multiplyScalar(0.0166));
+				console.log(pos);
+				vel.add (force.clone().multiplyScalar(dt));
+				pos.add (vel.clone().multiplyScalar(dt));
+				
 				ball.position.copy (pos);
 				light.position.copy (pos);
 				light.position.y += 1.2;
