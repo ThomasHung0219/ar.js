@@ -376,7 +376,7 @@ function animate() {
     
 		
 		//cannon.quaternion.copy (q2);
-		flag = computeProjectile();
+		
 		//computeInitPosVel();
 		
 		
@@ -410,8 +410,8 @@ function animate() {
 		  {
 			
 			q1.copy(q2);
-		  markerHiro.remove (scene.getObjectByName('projectile'));
-		  
+			markerHiro.remove (scene.getObjectByName('projectile'));
+			flag = computeProjectile();
 		  
 			if(flag)
 			{
