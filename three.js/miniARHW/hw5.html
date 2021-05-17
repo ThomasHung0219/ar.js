@@ -430,6 +430,10 @@ function animate() {
 				parabola.quaternion.copy (q2);
 				if(pos.y>=0)
 				{
+				markerHiro.remove(ball);
+				markerHiro.remove(light);
+				markerHiro.add(ball);
+				markerHiro.add(light);
 				$('#msg').css ('color','black' );
 				vel.add (force.clone().multiplyScalar(dt));
 				pos.add (vel.clone().multiplyScalar(dt));
