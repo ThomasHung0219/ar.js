@@ -132,6 +132,8 @@ function init() {
 	scene.add (markerHiro); 
 	scene.add (markerBomb); 
 	initSprite(markerBomb); 
+	CN = 100;
+	counter = 0;
 	
 	
 }
@@ -365,17 +367,17 @@ function animate() {
 	
 	if (markerBomb.visible === true) {
 		toBomb = markerHiro.worldToLocal (markerBomb.localToWorld (new THREE.Vector3(0,0,0)));
-		markerBomb.add (torso);
+		
 		target.copy(toBomb);
-		q1.copy(q2);  // save current (old) orientation
+		target.y = 0;
+		  // save current (old) orientation
     
-		CN = 100;
-		counter = 0;
+		
     
-		q2.setFromUnitVectors(new THREE.Vector3(1, 0, 0), target.clone().normalize());  // compute new oriention
-		cannon.quaternion.copy (q2);
+		
+		//cannon.quaternion.copy (q2);
 		flag = computeProjectile();
-		computeInitPosVel();
+		//computeInitPosVel();
 		
 		
 		if (counter > CN) {
@@ -383,7 +385,7 @@ function animate() {
 			return;
 		  }
 
-		  if (counter < CN) {
+		else if (counter < CN) {
 		  
 			markerHiro.remove(ball);
 			markerHiro.remove(light);
@@ -392,6 +394,25 @@ function animate() {
 			markerHiro.remove (markerHiro.getObjectByName('projectile'));
 			
 
+			
+			
+
+
+			let alpha = counter / CN;
+			let qm = q1.clone();
+
+			qm.slerp(q2, alpha);
+			cannon.quaternion.copy(qm);
+			++counter;
+		  }
+		  
+		else  if(counter == CN)
+		  {
+			
+			q1.copy(q2);
+		  markerHiro.remove (scene.getObjectByName('projectile'));
+		  
+		  
 			if(flag)
 			{
 				if(flagB==0)
@@ -436,59 +457,17 @@ function animate() {
 				
 				
 			}
-			
-			
-
-
-			let alpha = counter / CN;
-			let qm = q1.clone();
-
-			qm.slerp(q2, alpha);
-			cannon.quaternion.copy(qm);
-			++counter;
-		  }
-		  
-		  if(counter == CN)
-		  {
-			
-			
-		  markerHiro.remove (scene.getObjectByName('projectile'));
-		  
-		  if(flag)
-		  {
-			let parabola = makeProjectile();
-				parabola.name = 'projectile';
-				//scene.remove (scene.getObjectByName('projectile'));
-				markerHiro.add(parabola);
-				parabola.quaternion.copy (q2);
-			//console.log(pos);
-
-			if(pos.y>=0)
-			{
-				if(pos.x<=0.496||pos.z<=0.248)
-				{
-					setTimeout (spriteAnimate, 0);
-				}
-			vel.add (force.clone().multiplyScalar(dt));
-			pos.add (vel.clone().multiplyScalar(dt));
-			ball.position.copy (pos);
-			light.position.copy (pos);
-			light.position.y += 1.2;
-				prePos.copy (nowPos);
-			nowPos.copy (pos);
-		  
-			ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());
-			}
-
-		   }
 		   
 			  
 		  }
+		  q2.setFromUnitVectors(new THREE.Vector3(1, 0, 0), target.clone().normalize());  // compute new oriention
 		}
 		else{
 			markerBomb.children[1].visible = true;
 			flag=0;
 			flagB=0;
+			CN = 100;
+			counter = 0;
 		}
 }
 
