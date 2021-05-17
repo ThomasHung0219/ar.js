@@ -52,7 +52,7 @@ var cannon, barrel,body,barrelPart,torso;
 var clock;
 var ball, line = new THREE.Group(), points;
 var pos, vel, force;
-var nowPos, prePos;
+var nowPos, prePos,flag,flagB=0;
 /////////////////////
 var counter, N , CN, angle;
 var v, g,toBomb;
@@ -394,7 +394,13 @@ function animate() {
 
 			if(flag)
 			{
-				computeInitPosVel();
+				if(flagB==0)
+				{
+					computeInitPosVel();
+					flagB=1;
+				}
+				
+				
 				let parabola = makeProjectile();
 				parabola.name = 'projectile';
 				//scene.remove (scene.getObjectByName('projectile'));
@@ -423,6 +429,7 @@ function animate() {
 					setTimeout (spriteAnimate, 0);
 					markerBomb.remove (torso);
 					flag=0;
+					flagB=0;
 				}
 			}
 			
