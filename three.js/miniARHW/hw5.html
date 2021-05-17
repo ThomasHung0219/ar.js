@@ -420,16 +420,21 @@ function animate() {
 				light.position.copy (pos);
 				light.position.y += 1.2;
 				prePos.copy (nowPos);
-				nowPos.copy (pos);
+				nowPos.copy (pos); 
 			  
 				ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());
+				
+				var vector = ball.worldToLocal(markerBomb.localToWorld(new THREE.Vector3()));
+                var distance = vector.length();
+                
+                        
+                if (distance <= 1.1) {
+                    markerKanji.children[1].visible = false;
+                     setTimeout (spriteAnimate, 0);       
+                    }
 				}
 				
-				else{
-					setTimeout (spriteAnimate, 0);
-					markerBomb.remove (torso);
-					
-				}
+				
 			}
 			
 			
@@ -481,7 +486,7 @@ function animate() {
 		  }
 		}
 		else{
-			markerBomb.add (torso);
+			markerKanji.children[1].visible = true;
 			flag=0;
 			flagB=0;
 		}
