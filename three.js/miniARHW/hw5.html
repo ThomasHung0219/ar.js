@@ -384,7 +384,7 @@ function animate() {
 		  }
 
 		  if (counter < CN) {
-		  computeInitPosVel();
+		  
 			markerHiro.remove(ball);
 			markerHiro.remove(light);
 			markerHiro.add(ball);
@@ -394,6 +394,7 @@ function animate() {
 
 			if(flag)
 			{
+				computeInitPosVel();
 				let parabola = makeProjectile();
 				parabola.name = 'projectile';
 				//scene.remove (scene.getObjectByName('projectile'));
@@ -405,9 +406,7 @@ function animate() {
 					{
 						
 					}*/
-				//vel.add (force.clone().multiplyScalar(dt));
-				//pos.add (vel.clone().multiplyScalar(dt));
-				console.log(pos);
+				
 				vel.add (force.clone().multiplyScalar(dt));
 				pos.add (vel.clone().multiplyScalar(dt));
 				
@@ -422,7 +421,7 @@ function animate() {
 				
 				else{
 					setTimeout (spriteAnimate, 0);
-					 markerBomb.remove (torso);
+					markerBomb.remove (torso);
 					flag=0;
 				}
 			}
