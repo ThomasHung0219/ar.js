@@ -380,12 +380,12 @@ function animate() {
 		//computeInitPosVel();
 		
 		
-		if (counter > CN) {
+		/*if (counter > CN) {
 			markerHiro.remove (markerHiro.getObjectByName('projectile'));
 			return;
-		  }
+		  }*/
 
-		else if (counter < CN) {
+		if (counter < CN) {
 		  
 			markerHiro.remove(ball);
 			markerHiro.remove(light);
@@ -406,7 +406,7 @@ function animate() {
 			++counter;
 		  }
 		  
-		else  if(counter == CN)
+		else  //if(counter == CN)
 		  {
 			var tempx=1,tempz=1;
 			q1.copy(q2);
