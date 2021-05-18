@@ -408,7 +408,7 @@ function animate() {
 		  
 		else  //if(counter == CN)
 		  {
-			//var tempx=1,tempz=1;
+			var tempx=1,tempz=1;
 			
 			markerHiro.remove (scene.getObjectByName('projectile'));
 			flag = computeProjectile();
@@ -453,15 +453,15 @@ function animate() {
 			  
 				ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());
 				
-				var vector = ball.worldToLocal(markerBomb.localToWorld(new THREE.Vector3()));
-                var distance = vector.length();
+				//var vector = ball.worldToLocal(markerBomb.localToWorld(new THREE.Vector3()));
+                //var distance = vector.length();
                 
-				/*if(toBomb.x<0)
+				if(toBomb.x<0)
 					tempx = -1;
 				if(toBomb.z<0)
 					tempz = -1;
 					
-				if(pos.x>=toBomb.x*tempx&&pos.z>=toBomb.z*temp.z)
+				/*if(pos.x>=toBomb.x*tempx&&pos.z>=toBomb.z*temp.z)
 				{
 					$('#msg').css ('color','black' );
                      setTimeout (spriteAnimate, 0);     
@@ -480,7 +480,7 @@ function animate() {
 				}
 				
 				else{
-					if (distance <= 0.5)
+					if if(pos.x>=toBomb.x*tempx&&pos.z>=toBomb.z*temp.z)
 					{
 						setTimeout (spriteAnimate, 0); 
 						markerBomb.remove(torso);
@@ -528,16 +528,18 @@ function makeCannon() {
 
 function computeProjectile() {
 	let L = target.length();
+	let flagC=0;
   theta = Math.asin(L*g/v/v)/2;
   //console.log (L*g/v/v)
   if (L*g/v/v > 1) {
   	$('#msg').text ('too far to hit');
-    return 0;
+    flagC=0;
   } else {
   	$('#msg').text ('reachable')
+	flagC=1;
   }
   cannon.children[1].rotation.z = -(Math.PI/2 - theta);
-  return 1;
+  return flagC;
 }
 
 function computeInitPosVel() {
