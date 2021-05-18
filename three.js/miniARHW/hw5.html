@@ -412,6 +412,12 @@ function animate() {
 			
 			markerHiro.remove (scene.getObjectByName('projectile'));
 			flag = computeProjectile();
+			
+			let parabola = makeProjectile();
+			parabola.name = 'projectile';
+			//scene.remove (scene.getObjectByName('projectile'));
+			markerHiro.add(parabola);
+			parabola.quaternion.copy (q2);
 		  
 			if(flag)
 			{
@@ -425,11 +431,7 @@ function animate() {
 				}
 				
 				
-				let parabola = makeProjectile();
-				parabola.name = 'projectile';
-				//scene.remove (scene.getObjectByName('projectile'));
-				markerHiro.add(parabola);
-				parabola.quaternion.copy (q2);
+				
 				if(pos.y>=0)
 				{
 				markerHiro.remove(ball);
