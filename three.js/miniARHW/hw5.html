@@ -480,8 +480,8 @@ function animate() {
 				}
 				
 				else{
-					console.log(ball.position);
-					console.log(target);
+					console.log(ball.position.clone().sub(target).normalize());
+					
 					if(ball.position.clone().sub(target).normalize() <= 0.5)
 					{
 						setTimeout (spriteAnimate, 0); 
