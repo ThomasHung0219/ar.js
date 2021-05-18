@@ -185,7 +185,7 @@ function addMarkerHiro(){
  
     nowPos = new THREE.Vector3();
     prePos = new THREE.Vector3();
-    prePos.copy(barrel.localToWorld (new THREE.Vector3(0,1.8,0)));
+    prePos.copy(markerRoot.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,1.8,0))));
 
     //////////////////////////
     q1 = new THREE.Quaternion(); // null rotation
@@ -532,11 +532,11 @@ function computeInitPosVel() {
   const SPEED = L*0.8;
 	vel = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,2.0,0))).sub (
   markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,0,0)))).setLength (SPEED);
-	//vel = markerHiro.worldToLocal (vel);
+	vel = markerHiro.worldToLocal (vel);
   
   
 	pos = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,2.2,0)));
-	//pos = markerHiro.worldToLocal (pos);
+	pos = markerHiro.worldToLocal (pos);
 	force = new THREE.Vector3(0,-12,0);
   
 	force.add(force.clone().multiplyScalar(-0.002115));  
