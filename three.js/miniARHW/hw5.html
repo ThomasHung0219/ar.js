@@ -549,6 +549,7 @@ function computeInitPosVel() {
   
   let L = target.length();
   const SPEED = L*0.8;
+	cannon.children[1].rotation.z = -(Math.PI/2 - theta);
 	vel = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,0.5,0))).sub (
   markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,0,0)))).setLength (SPEED);
 	//vel = markerHiro.worldToLocal (vel);
