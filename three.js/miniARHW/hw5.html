@@ -417,6 +417,7 @@ function animate() {
 			{
 				if(flagB ==0)
 				{
+					$('#msg').css ('color','black' );
 					q1.copy(q2);
 					computeInitPosVel();
 					flagB=0;
@@ -474,7 +475,7 @@ function animate() {
 				}
 				
 				else{
-					$('#msg').css ('color','black' );
+					
                      setTimeout (spriteAnimate, 0);     
 					 markerBomb.children[1].visible = false;	
 					 flag=0;
