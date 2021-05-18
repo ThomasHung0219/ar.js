@@ -412,7 +412,7 @@ function animate() {
 			
 			markerHiro.remove (scene.getObjectByName('projectile'));
 			flag = computeProjectile();
-			
+			cannon.children[1].rotation.z = -(Math.PI/2 - theta);
 			let parabola = makeProjectile();
 			parabola.name = 'projectile';
 			//scene.remove (scene.getObjectByName('projectile'));
@@ -540,7 +540,7 @@ function computeProjectile() {
   	$('#msg').text ('reachable')
 	flagC=1;
   }
-  cannon.children[1].rotation.z = -(Math.PI/2 - theta);
+  //cannon.children[1].rotation.z = -(Math.PI/2 - theta);
   return flagC;
 }
 
