@@ -480,9 +480,9 @@ function animate() {
 				}
 				
 				else{
-					console.log(ball.position.clone().sub(target).normalize().length());
+					console.log(ball.position.clone().sub(target).length());
 					
-					if(ball.position.clone().sub(target).normalize().length() <= 0.5)
+					if(ball.position.clone().sub(target).length() <= 0.5)
 					{
 						setTimeout (spriteAnimate, 0); 
 						markerBomb.remove(torso);
