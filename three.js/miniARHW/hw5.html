@@ -420,7 +420,7 @@ function animate() {
 					$('#msg').css ('color','black' );
 					q1.copy(q2);
 					computeInitPosVel();
-					flagB=0;
+					flagB=1;
 					
 				}
 				
@@ -539,7 +539,7 @@ function computeInitPosVel() {
   
   let L = target.length();
   const SPEED = L*0.8;
-	vel = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,0.5,0))).sub (
+	vel = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,1.2,0))).sub (
   markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,0,0)))).setLength (SPEED);
 	//vel = markerHiro.worldToLocal (vel);
   
