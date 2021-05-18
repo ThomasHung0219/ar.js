@@ -437,16 +437,16 @@ function animate() {
 				markerHiro.add(ball);
 				markerHiro.add(light);
 				
-				/*vel.add (force.clone().multiplyScalar(dt));
-				pos.add (vel.clone().multiplyScalar(dt));
 				
-				ball.position.copy (pos);
-				light.position.copy (pos);
-				light.position.y += 1.2;
+				
+				/*vel.add (force.clone().multiplyScalar(dt));
+				pos.add (vel.clone().multiplyScalar(dt));*/
+				
+				
 				prePos.copy (nowPos);
 				nowPos.copy (pos); 
 			  
-				ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());*/
+				ball.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), nowPos.clone().sub(prePos).normalize());
 				
 				var vector = ball.worldToLocal(markerBomb.localToWorld(new THREE.Vector3()));
                 var distance = vector.length();
