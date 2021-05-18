@@ -408,8 +408,8 @@ function animate() {
 		  
 		else  //if(counter == CN)
 		  {
-			var tempx=1,tempz=1;
-			q1.copy(q2);
+			//var tempx=1,tempz=1;
+			
 			markerHiro.remove (scene.getObjectByName('projectile'));
 			flag = computeProjectile();
 		  
@@ -417,6 +417,7 @@ function animate() {
 			{
 				if(flagB ==0)
 				{
+					q1.copy(q2);
 					computeInitPosVel();
 					flagB=0;
 					
