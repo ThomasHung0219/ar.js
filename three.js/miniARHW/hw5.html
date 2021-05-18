@@ -480,7 +480,7 @@ function animate() {
 				}
 				
 				else{
-					if(pos.x>=toBomb.x*tempx&&pos.z>=toBomb.z*temp.z)
+					if(ball.position.clone().sub(target).normalize() <= 0.5)
 					{
 						setTimeout (spriteAnimate, 0); 
 						markerBomb.remove(torso);
