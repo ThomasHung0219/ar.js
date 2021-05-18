@@ -478,12 +478,16 @@ function animate() {
 				}
 				
 				else{
-					
-                     setTimeout (spriteAnimate, 0);     
-					 markerBomb.children[1].visible = false;	
+					if (distance <= 0.5)
+					{
+						setTimeout (spriteAnimate, 0); 
+						markerBomb.remove(torso);
+					}
+                         
+					 //markerBomb.children[1].visible = false;	
 					 flag=0;
 					 flagB=0;
-			         pos = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,2.2,0)));
+			         pos = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,0.5,0)));
 			         CN = 100;
 			         counter = 0;
 					 return;
@@ -496,14 +500,14 @@ function animate() {
 		  }
 		  q2.setFromUnitVectors(new THREE.Vector3(1, 0, 0), target.clone().normalize());  // compute new oriention
 		}
-		 /*else{
-			markerBomb.children[1].visible = true;
-			flag=0;
+		 else{
+			markerBomb.add(torso);
+			/*flag=0;
 			flagB=0;
 			pos=undefined
 			CN = 100;
-			counter = 0;
-		}*/
+			counter = 0;*/
+		}
 }
 
 function makeCannon() {
@@ -539,7 +543,7 @@ function computeInitPosVel() {
   
   let L = target.length();
   const SPEED = L*0.8;
-	vel = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,1.2,0))).sub (
+	vel = markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,2.2,0))).sub (
   markerHiro.worldToLocal (barrel.localToWorld (new THREE.Vector3(0,0,0)))).setLength (SPEED);
 	//vel = markerHiro.worldToLocal (vel);
   
