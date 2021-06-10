@@ -186,7 +186,7 @@ var temp = 0;
 function animate() {
   keyboard.update();
    
-  if (keyboard.down('up')&& tempU != 1) {
+  if (keyboard.down('up')) {
   	pawn.position.y += 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
 	if(state==1&&temp==1)
@@ -194,7 +194,7 @@ function animate() {
 	temp = state; 
   } 
   
-  if (keyboard.down('down')&& tempD != 1) {
+  if (keyboard.down('down')) {
   	pawn.position.y -= 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
 	if(state==1&&temp==1)
@@ -202,14 +202,14 @@ function animate() {
 	temp = state; 
   } 
 
-  if (keyboard.down('left')&& tempL != 1) { 
+  if (keyboard.down('left')) { 
   	pawn.position.x -= 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
 	if(state==1&&temp==1)
 		pawn.position.x += 0.1;
 	temp = state; 
   }
-  if (keyboard.down('right')&& tempR != 1) {
+  if (keyboard.down('right')) {
   	pawn.position.x += 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
 	if(state==1&&temp==1)
