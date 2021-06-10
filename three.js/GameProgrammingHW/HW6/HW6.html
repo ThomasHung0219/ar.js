@@ -185,21 +185,28 @@ function init() {
 function animate() {
   keyboard.update();
   
-  if (keyboard.down('up')) {
+  let tempU = inOut (pawn.position.x, pawn.position.y+0.1, tree, RR);
+  let tempD = inOut (pawn.position.x, pawn.position.y-0.1, tree, RR);
+  let tempL = inOut (pawn.position.x+0.1, pawn.position.y, tree, RR);
+  let tempR = inOut (pawn.position.x-0.1, pawn.position.y, tree, RR);
+  
+  
+  
+  if (keyboard.down('up')&& tempU != 1) {
   	pawn.position.y += 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
   } 
   
-  if (keyboard.down('down')) {
+  if (keyboard.down('down')&& tempD != 1) {
   	pawn.position.y -= 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
   } 
 
-  if (keyboard.down('left')) { 
+  if (keyboard.down('left')&& tempL != 1) { 
   	pawn.position.x -= 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
   }
-  if (keyboard.down('right')) {
+  if (keyboard.down('right')&& tempR != 1) {
   	pawn.position.x += 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
   } 
