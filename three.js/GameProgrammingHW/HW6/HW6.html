@@ -217,7 +217,8 @@ function animate() {
   if (state === 1) { // solid
   	pawn.material.color = new THREE.Color ('red');
   } else {
-  	pawn.material.color = new THREE.Color ('cyan');  
+  	pawn.material.color = new THREE.Color ('cyan'); 
+	tempU = 0;tempD = 0;tempL = 0;tempR = 0;
   }
   
   requestAnimationFrame(animate);
