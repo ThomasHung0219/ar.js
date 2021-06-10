@@ -182,43 +182,45 @@ function init() {
   
 }
 
-var tempU = 0,tempD = 0,tempL = 0,tempR = 0;
+var temp = 0;
 function animate() {
   keyboard.update();
+
   
   
   
   
   
+
   if (keyboard.down('up')) {
   	pawn.position.y += 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
-	if(state==1&&tempU==1)
+	if(state==1&&temp==1)
 		pawn.position.y -= 0.1;
-	tempU = inOut (pawn.position.x, pawn.position.y, tree, RR);
+	temp = state; 
   } 
   
   if (keyboard.down('down')) {
   	pawn.position.y -= 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
-	if(state==1&&tempD==1)
+	if(state==1&&temp==1)
 		pawn.position.y += 0.1;
-	tempD = inOut (pawn.position.x, pawn.position.y, tree, RR);
+	temp = state; 
   } 
 
   if (keyboard.down('left')) { 
   	pawn.position.x -= 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
-	if(state==1&&tempL==1)
+	if(state==1&&temp==1)
 		pawn.position.x += 0.1;
-	tempL = inOut (pawn.position.x, pawn.position.y, tree, RR);
+	temp = state; 
   }
   if (keyboard.down('right')) {
   	pawn.position.x += 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
-	if(state==1&&tempR==1)
-		pawn.position.y -= 0.1;
-	tempR = inOut (pawn.position.x, pawn.position.y, tree, RR);
+	if(state==1&&temp==1)
+		pawn.position.x -= 0.1;
+	temp = state; 
   } 
   
   
