@@ -158,7 +158,9 @@ function init() {
 
   scene = new THREE.Scene();
   camera = new THREE.OrthographicCamera(-1, 6, 6, -1, -10, 100);
-  camera.position.set = (1,1,10);
+  camera.position.x = 1;
+  camera.position.y = 1;
+  camera.position.z = 10;
 
   let grid = new THREE.GridHelper(12,12,'red','white');
   grid.rotation.x = -Math.PI/2
