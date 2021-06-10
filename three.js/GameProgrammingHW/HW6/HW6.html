@@ -190,26 +190,34 @@ function animate() {
   
   
   
-  if (keyboard.down('up')&& tempU != 1) {
+  if (keyboard.down('up')) {
   	pawn.position.y += 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
+	if(state==1&&tempU==1)
+		pawn.position.y -= 0.1;
 	tempU = inOut (pawn.position.x, pawn.position.y, tree, RR);
   } 
   
-  if (keyboard.down('down')&& tempD != 1) {
+  if (keyboard.down('down')) {
   	pawn.position.y -= 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
+	if(state==1&&tempD==1)
+		pawn.position.y += 0.1;
 	tempD = inOut (pawn.position.x, pawn.position.y, tree, RR);
   } 
 
-  if (keyboard.down('left')&& tempL != 1) { 
+  if (keyboard.down('left')) { 
   	pawn.position.x -= 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
+	if(state==1&&tempL==1)
+		pawn.position.x += 0.1;
 	tempL = inOut (pawn.position.x, pawn.position.y, tree, RR);
   }
-  if (keyboard.down('right')&& tempR != 1) {
+  if (keyboard.down('right')) {
   	pawn.position.x += 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
+	if(state==1&&tempR==1)
+		pawn.position.y -= 0.1;
 	tempR = inOut (pawn.position.x, pawn.position.y, tree, RR);
   } 
   
@@ -219,7 +227,7 @@ function animate() {
   	pawn.material.color = new THREE.Color ('red');
   } else {
   	pawn.material.color = new THREE.Color ('cyan'); 
-	tempU = 0;tempD = 0;tempL = 0;tempR = 0;
+	//tempU = 0;tempD = 0;tempL = 0;tempR = 0;
   }
   
   requestAnimationFrame(animate);
