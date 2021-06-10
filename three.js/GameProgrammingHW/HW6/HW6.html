@@ -209,13 +209,14 @@ function animate() {
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
   } 
   
-  tempU = inOut (pawn.position.x, pawn.position.y+0.1, tree, RR);
-  tempD = inOut (pawn.position.x, pawn.position.y-0.1, tree, RR);
-  tempL = inOut (pawn.position.x+0.1, pawn.position.y, tree, RR);
-  tempR = inOut (pawn.position.x-0.1, pawn.position.y, tree, RR);
+  
   
   if (state === 1) { // solid
   	pawn.material.color = new THREE.Color ('red');
+	tempU = inOut (pawn.position.x, pawn.position.y, tree, RR);
+	tempD = inOut (pawn.position.x, pawn.position.y, tree, RR);
+	tempL = inOut (pawn.position.x, pawn.position.y, tree, RR);
+	tempR = inOut (pawn.position.x, pawn.position.y, tree, RR);
   } else {
   	pawn.material.color = new THREE.Color ('cyan'); 
 	tempU = 0;tempD = 0;tempL = 0;tempR = 0;
