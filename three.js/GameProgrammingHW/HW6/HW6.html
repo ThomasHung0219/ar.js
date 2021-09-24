@@ -185,7 +185,13 @@ function init() {
 var temp = 0;
 function animate() {
   keyboard.update();
-   
+
+  
+  
+  
+  
+  
+
   if (keyboard.down('up')) {
   	pawn.position.y += 0.1;
     state = inOut (pawn.position.x, pawn.position.y, tree, RR);
@@ -223,7 +229,7 @@ function animate() {
   	pawn.material.color = new THREE.Color ('red');
   } else {
   	pawn.material.color = new THREE.Color ('cyan'); 
-	tempU = 0;tempD = 0;tempL = 0;tempR = 0;
+	//tempU = 0;tempD = 0;tempL = 0;tempR = 0;
   }
   
   requestAnimationFrame(animate);
